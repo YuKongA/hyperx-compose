@@ -35,7 +35,7 @@ android {
 
 @Suppress("UseTomlInstead")
 dependencies {
-    api("top.yukonga.miuix.kmp:miuix:0.3.1")
+    api("top.yukonga.miuix.kmp:miuix:0.3.2")
     api("dev.chrisbanes.haze:haze:1.1.0")
     val composeBom = platform("androidx.compose:compose-bom:2024.11.00")
     implementation(composeBom)
