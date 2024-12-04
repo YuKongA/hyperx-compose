@@ -51,9 +51,12 @@ fun SwitchPreference(
     key: String? = null,
     defValue: Boolean = false,
     enabled: Boolean = true,
-    checked: MutableState<Boolean>
+    checked: MutableState<Boolean>,
+    onCheckedChange: ((Boolean) -> Unit)? = null,
 ) {
-    checked.value = key?.let { SafeSP.getBoolean(it, defValue) } ?: defValue
+    key?.let {
+        checked.value = SafeSP.getBoolean(it, defValue)
+    }
     SuperSwitch(
         title = title,
         summary = summary,
@@ -66,6 +69,7 @@ fun SwitchPreference(
         onCheckedChange = { newValue ->
             key?.let { SafeSP.putAny(it, newValue) }
             checked.value = newValue
+            onCheckedChange?.let { it1 -> it1(newValue) }
         },
         insideMargin = PaddingValues((icon?.getHorizontalPadding() ?: 16.dp), 16.dp, 16.dp, 16.dp),
         enabled = enabled
