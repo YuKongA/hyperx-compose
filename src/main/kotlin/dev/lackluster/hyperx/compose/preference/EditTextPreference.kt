@@ -48,11 +48,11 @@ fun EditTextPreference(
     val spValue = remember { mutableStateOf(
         key?.let {
             when (dataType) {
-                EditTextDataType.BOOLEAN -> SafeSP.getBoolean(key, defValue as Boolean)
-                EditTextDataType.INT -> SafeSP.getInt(key, defValue as Int)
-                EditTextDataType.FLOAT -> SafeSP.getFloat(key, defValue as Float)
-                EditTextDataType.LONG -> SafeSP.getLong(key, defValue as Long)
-                EditTextDataType.STRING -> SafeSP.getString(key, defValue as String)
+                EditTextDataType.BOOLEAN -> SafeSP.getBoolean(key, defValue as? Boolean ?: false)
+                EditTextDataType.INT -> SafeSP.getInt(key, defValue as? Int ?: 0)
+                EditTextDataType.FLOAT -> SafeSP.getFloat(key, defValue as? Float ?: 0.0f)
+                EditTextDataType.LONG -> SafeSP.getLong(key, defValue as? Long ?: 0L)
+                EditTextDataType.STRING -> SafeSP.getString(key, defValue as? String ?: "")
             }
         } ?: defValue
     ) }
@@ -116,8 +116,10 @@ fun EditTextDialog(
         summary = message,
         show = visibility,
         onDismissRequest = {
-            keyboard?.hide()
-            dismissDialog(visibility)
+            if (visibility.value) {
+                keyboard?.hide()
+                dismissDialog(visibility)
+            }
         }
     ) {
         LaunchedEffect(visibility.value) {
