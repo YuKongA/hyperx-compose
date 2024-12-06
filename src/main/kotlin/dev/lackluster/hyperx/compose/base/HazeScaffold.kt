@@ -89,7 +89,7 @@ fun HazeScaffold(
                         adjustPadding.calculateTopPadding(),
                 end = contentPadding.calculateRightPadding(LayoutDirection.Ltr) +
                         adjustPadding.calculateRightPadding(LayoutDirection.Ltr),
-                bottom = contentPadding.calculateBottomPadding() +
+                bottom = contentPadding.calculateBottomPadding().let { if (it == 0.dp) 12.dp else it } +
                         adjustPadding.calculateBottomPadding() +
                         if (bottomBar != null) contentWindowInsets.asPaddingValues().calculateBottomPadding()
                         else 0.dp
