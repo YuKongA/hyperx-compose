@@ -16,6 +16,7 @@ fun PreferenceGroup(
     title: String? = null,
     textColor: Color = MiuixTheme.colorScheme.onBackgroundVariant,
     first: Boolean = false,
+    last: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
     title?.let {
@@ -28,11 +29,12 @@ fun PreferenceGroup(
     val cardTopPadding = if (title == null) {
         if (first) 12.dp else 6.dp
     } else 0.dp
+    val cardBottomPadding = if (last) 12.dp else 6.dp
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
-            .padding(bottom = 6.dp, top = cardTopPadding),
+            .padding(bottom = cardBottomPadding, top = cardTopPadding),
         content = content
     )
 }

@@ -2,7 +2,6 @@ package dev.lackluster.hyperx.compose.base
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -89,10 +88,8 @@ fun HazeScaffold(
                         adjustPadding.calculateTopPadding(),
                 end = contentPadding.calculateRightPadding(LayoutDirection.Ltr) +
                         adjustPadding.calculateRightPadding(LayoutDirection.Ltr),
-                bottom = contentPadding.calculateBottomPadding().let { if (it == 0.dp) 12.dp else it } +
-                        adjustPadding.calculateBottomPadding() +
-                        if (bottomBar != null) contentWindowInsets.asPaddingValues().calculateBottomPadding()
-                        else 0.dp
+                bottom = contentPadding.calculateBottomPadding() +
+                        adjustPadding.calculateBottomPadding()
             ))
         }
     }
