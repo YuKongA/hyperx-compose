@@ -3,10 +3,17 @@ package dev.lackluster.hyperx.compose.base
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -43,9 +50,13 @@ fun BasePage(
     blurEnabled: MutableState<Boolean> = mutableStateOf(true),
     blurTintAlphaLight: MutableFloatState = mutableFloatStateOf(0.6f),
     blurTintAlphaDark: MutableFloatState = mutableFloatStateOf(0.5f),
-    navigationIcon: @Composable () -> Unit = {
+    mode: BasePageDefaults.Mode = BasePageDefaults.Mode.FULL,
+    navigationIcon: @Composable (padding: PaddingValues) -> Unit = { padding ->
         IconButton(
-            modifier = Modifier.padding(start = 21.dp).size(40.dp),
+            modifier = Modifier
+                .padding(padding)
+                .padding(start = 21.dp)
+                .size(40.dp),
             onClick = {
                 navController.popBackStack()
             }
@@ -58,7 +69,7 @@ fun BasePage(
             )
         }
     },
-    actions: @Composable RowScope.() -> Unit = {},
+    actions: @Composable RowScope.(padding: PaddingValues) -> Unit = {},
     content: LazyListScope.() -> Unit
 ) {
     val topAppBarBackground = MiuixTheme.colorScheme.background
@@ -75,6 +86,14 @@ fun BasePage(
         if (topAppBarBackground.luminance() >= 0.5f) blurTintAlphaLight.floatValue
         else blurTintAlphaDark.floatValue
     ) }
+    val layoutDirection = LocalLayoutDirection.current
+    val systemBarInsets = WindowInsets.systemBars.add(WindowInsets.displayCutout).only(WindowInsetsSides.Horizontal).asPaddingValues()
+    val navigationIconPadding = PaddingValues.Absolute(
+        left = if (mode != BasePageDefaults.Mode.SPLIT_RIGHT) systemBarInsets.calculateLeftPadding(layoutDirection) else 0.dp
+    )
+    val actionsPadding = PaddingValues.Absolute(
+        right = if (mode != BasePageDefaults.Mode.SPLIT_LEFT) systemBarInsets.calculateRightPadding(layoutDirection) else 0.dp
+    )
     HazeScaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { contentPadding ->
@@ -84,8 +103,8 @@ fun BasePage(
                 ),
                 title = title,
                 scrollBehavior = scrollBehavior,
-                navigationIcon = navigationIcon,
-                actions = actions,
+                navigationIcon = { navigationIcon.invoke(navigationIconPadding) },
+                actions = { actions(this, actionsPadding) },
                 defaultWindowInsetsPadding = false,
                 horizontalPadding = 28.dp + contentPadding.calculateLeftPadding(LocalLayoutDirection.current)
             )
@@ -109,5 +128,13 @@ fun BasePage(
             topAppBarScrollBehavior = scrollBehavior,
             content = content
         )
+    }
+}
+
+object BasePageDefaults {
+    enum class Mode {
+        FULL,
+        SPLIT_LEFT,
+        SPLIT_RIGHT
     }
 }
