@@ -10,8 +10,17 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -26,6 +35,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
@@ -100,11 +110,19 @@ fun HyperXApp(
 fun NormalLayout(
     mainPageContent: @Composable (navController: NavHostController, adjustPadding: PaddingValues) -> Unit,
     otherPageBuilder: (NavGraphBuilder.(navController: NavHostController, adjustPadding: PaddingValues) -> Unit)? = null,
-    adjustPadding: PaddingValues = PaddingValues(0.dp)
+    extraPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val easing = HyperXAppDefaults.NavAnimationEasing
     val duration = easing.duration.toInt()
     val navController = rememberNavController()
+    val layoutDirection = LocalLayoutDirection.current
+    val systemBarInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).add(WindowInsets.displayCutout).asPaddingValues()
+    val contentPadding = PaddingValues(
+        start = systemBarInsets.calculateStartPadding(layoutDirection) + extraPadding.calculateStartPadding(layoutDirection),
+        top = extraPadding.calculateTopPadding(),
+        end = systemBarInsets.calculateEndPadding(layoutDirection)+ extraPadding.calculateEndPadding(layoutDirection),
+        bottom = extraPadding.calculateBottomPadding()
+    )
     NavHost(
         navController = navController,
         startDestination = HyperXAppDefaults.PAGE_MAIN,
@@ -133,8 +151,8 @@ fun NormalLayout(
             )
         }
     ) {
-        composable(HyperXAppDefaults.PAGE_MAIN) { mainPageContent(navController, adjustPadding) }
-        otherPageBuilder?.let { it(navController, adjustPadding) }
+        composable(HyperXAppDefaults.PAGE_MAIN) { mainPageContent(navController, contentPadding) }
+        otherPageBuilder?.let { it(navController, contentPadding) }
     }
 }
 
@@ -149,6 +167,20 @@ fun SplitLayout(
     val easing = HyperXAppDefaults.NavAnimationEasing
     val duration = easing.duration.toInt()
     val navController = rememberNavController()
+    val layoutDirection = LocalLayoutDirection.current
+    val systemBarInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).add(WindowInsets.displayCutout).asPaddingValues()
+    val contentPaddingLeft = PaddingValues(
+        start = systemBarInsets.calculateStartPadding(layoutDirection) + 12.dp,
+        top = 0.dp,
+        end = 12.dp,
+        bottom = 0.dp
+    )
+    val contentPaddingRight = PaddingValues(
+        start = 12.dp,
+        top = 0.dp,
+        end = systemBarInsets.calculateEndPadding(layoutDirection) + 12.dp,
+        bottom = 0.dp
+    )
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -157,7 +189,7 @@ fun SplitLayout(
         Box(
             modifier = Modifier.weight(leftWeight)
         ) {
-            mainPageContent(navController, PaddingValues(horizontal = 12.dp))
+            mainPageContent(navController, contentPaddingLeft)
         }
         VerticalDivider(thickness = 0.75.dp, color = MiuixTheme.colorScheme.dividerLine)
         NavHost(
@@ -194,7 +226,7 @@ fun SplitLayout(
                 exitTransition = { fadeOut() },
                 popEnterTransition = { fadeIn() }
             ) { emptyPageContent() }
-            otherPageBuilder?.let { it(navController, PaddingValues(horizontal = 12.dp)) }
+            otherPageBuilder?.let { it(navController, contentPaddingRight) }
         }
     }
 }

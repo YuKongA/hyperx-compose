@@ -3,16 +3,10 @@ package dev.lackluster.hyperx.compose.base
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -92,6 +86,7 @@ fun BasePage(
                 scrollBehavior = scrollBehavior,
                 navigationIcon = navigationIcon,
                 actions = actions,
+                defaultWindowInsetsPadding = false,
                 horizontalPadding = 28.dp + contentPadding.calculateLeftPadding(LocalLayoutDirection.current)
             )
         },
@@ -108,9 +103,7 @@ fun BasePage(
         LazyColumn(
             modifier = Modifier
                 .height(getWindowSize().height.dp)
-                .background(MiuixTheme.colorScheme.background)
-                .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
-                .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal)),
+                .background(MiuixTheme.colorScheme.background),
             state = listState,
             contentPadding = paddingValues,
             topAppBarScrollBehavior = scrollBehavior,

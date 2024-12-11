@@ -2,6 +2,8 @@ package dev.lackluster.hyperx.compose.base
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -29,7 +31,7 @@ fun HazeScaffold(
     floatingActionButtonPosition: MiuixFabPosition = MiuixFabPosition.End,
     snackbarHost: @Composable () -> Unit = {},
     containerColor: Color = MiuixTheme.colorScheme.background,
-    contentWindowInsets: WindowInsets = WindowInsets.systemBars,
+    contentWindowInsets: WindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Vertical),
     blurTopBar: Boolean = false,
     blurBottomBar: Boolean = false,
     hazeState: HazeState = remember { HazeState() },
