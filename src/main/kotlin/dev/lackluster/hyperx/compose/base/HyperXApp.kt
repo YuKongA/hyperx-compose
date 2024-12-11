@@ -117,12 +117,14 @@ fun NormalLayout(
     val navController = rememberNavController()
     val layoutDirection = LocalLayoutDirection.current
     val systemBarInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).add(WindowInsets.displayCutout).asPaddingValues()
-    val contentPadding = PaddingValues(
-        start = systemBarInsets.calculateStartPadding(layoutDirection) + extraPadding.calculateStartPadding(layoutDirection),
-        top = extraPadding.calculateTopPadding(),
-        end = systemBarInsets.calculateEndPadding(layoutDirection)+ extraPadding.calculateEndPadding(layoutDirection),
-        bottom = extraPadding.calculateBottomPadding()
-    )
+    val contentPadding = systemBarInsets.let {
+        PaddingValues(
+            start = it.calculateStartPadding(layoutDirection) + extraPadding.calculateStartPadding(layoutDirection),
+            top = extraPadding.calculateTopPadding(),
+            end = it.calculateEndPadding(layoutDirection)+ extraPadding.calculateEndPadding(layoutDirection),
+            bottom = extraPadding.calculateBottomPadding()
+        )
+    }
     NavHost(
         navController = navController,
         startDestination = HyperXAppDefaults.PAGE_MAIN,
@@ -169,18 +171,22 @@ fun SplitLayout(
     val navController = rememberNavController()
     val layoutDirection = LocalLayoutDirection.current
     val systemBarInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).add(WindowInsets.displayCutout).asPaddingValues()
-    val contentPaddingLeft = PaddingValues(
-        start = systemBarInsets.calculateStartPadding(layoutDirection) + 12.dp,
-        top = 0.dp,
-        end = 12.dp,
-        bottom = 0.dp
-    )
-    val contentPaddingRight = PaddingValues(
-        start = 12.dp,
-        top = 0.dp,
-        end = systemBarInsets.calculateEndPadding(layoutDirection) + 12.dp,
-        bottom = 0.dp
-    )
+    val contentPaddingLeft = systemBarInsets.let {
+        PaddingValues(
+            start = it.calculateStartPadding(layoutDirection) + 12.dp,
+            top = it.calculateTopPadding(),
+            end = 12.dp,
+            bottom = it.calculateBottomPadding()
+        )
+    }
+    val contentPaddingRight = systemBarInsets.let {
+        PaddingValues(
+            start = 12.dp,
+            top = it.calculateTopPadding(),
+            end = it.calculateEndPadding(layoutDirection) + 12.dp,
+            bottom = it.calculateBottomPadding()
+        )
+    }
     Row(
         modifier = Modifier
             .fillMaxSize()
