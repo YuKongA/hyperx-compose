@@ -41,7 +41,7 @@ fun EditTextPreference(
     dataType: EditTextDataType,
     dialogMessage: String? = null,
     isValueValid: ((value: Any) -> Boolean)? = null,
-    showValue: Boolean = true,
+    valuePosition: ValuePosition = ValuePosition.VALUE_VIEW,
     onValueChange: ((String, Any) -> Unit)? = null,
 ) {
     val dialogVisibility = remember { mutableStateOf(false) }
@@ -75,13 +75,13 @@ fun EditTextPreference(
 
     SuperArrow(
         title = title,
-        summary = summary,
+        summary = stringValue.value.takeIf { valuePosition == ValuePosition.SUMMARY_VIEW && it.isNotBlank() } ?: summary,
         leftAction = {
             icon?.let {
                 DrawableResIcon(it)
             }
         },
-        rightText = stringValue.value.takeIf { showValue },
+        rightText = stringValue.value.takeIf { valuePosition == ValuePosition.VALUE_VIEW },
         insideMargin = PaddingValues((icon?.getHorizontalPadding() ?: 16.dp), 16.dp, 16.dp, 16.dp),
         onClick = {
             dialogVisibility.value = true
@@ -170,4 +170,10 @@ enum class EditTextDataType {
     FLOAT,
     LONG,
     STRING,
+}
+
+enum class ValuePosition {
+    HIDDEN,
+    VALUE_VIEW,
+    SUMMARY_VIEW,
 }
