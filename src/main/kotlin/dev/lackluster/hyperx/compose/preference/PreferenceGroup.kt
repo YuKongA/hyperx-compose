@@ -22,7 +22,7 @@ fun PreferenceGroup(
     title?.let {
         SmallTitle(
             text = it,
-            modifier = if (first) Modifier else Modifier.padding(top = 6.dp),
+            modifier = Modifier.padding(top = 6.dp),
             textColor = textColor
         )
     }
