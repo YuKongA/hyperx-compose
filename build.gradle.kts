@@ -37,7 +37,7 @@ android {
 dependencies {
     api("top.yukonga.miuix.kmp:miuix:0.3.2")
     api("dev.chrisbanes.haze:haze:1.1.0")
-    api("androidx.compose.foundation:foundation:1.7.5")
+    api("androidx.compose.foundation:foundation:1.7.6")
     api("androidx.activity:activity-compose:1.9.3")
-    api("androidx.navigation:navigation-compose:2.8.4")
+    api("androidx.navigation:navigation-compose:2.8.5")
 }
