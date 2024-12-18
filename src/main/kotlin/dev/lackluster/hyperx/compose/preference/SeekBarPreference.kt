@@ -4,12 +4,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -17,6 +17,8 @@ import dev.lackluster.hyperx.compose.activity.SafeSP
 import dev.lackluster.hyperx.compose.base.ImageIcon
 import dev.lackluster.hyperx.compose.base.DrawableResIcon
 import top.yukonga.miuix.kmp.basic.BasicComponent
+import top.yukonga.miuix.kmp.basic.BasicComponentColors
+import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
 import top.yukonga.miuix.kmp.basic.Slider
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -31,17 +33,22 @@ fun SeekBarPreference(
     max: Int = 1,
     showValue: Boolean = true,
     format: String = "%d",
+    enabled: Boolean = true,
+    titleColor: BasicComponentColors = BasicComponentDefaults.titleColor(),
+    valueColor: RightActionColor = RightActionDefaults.rightActionColors(),
     onValueChange: ((Int) -> Unit)? = null,
 ) {
-    val spValue = remember { mutableIntStateOf(
+    var spValue by remember { mutableIntStateOf(
         key?.let { SafeSP.getInt(it, defValue) } ?: defValue
     ) }
+    val updatedOnValueChange by rememberUpdatedState(onValueChange)
 
     Column {
         BasicComponent(
             modifier = Modifier,
             insideMargin = PaddingValues(16.dp, 16.dp, 16.dp, 12.dp),
             title = title,
+            titleColor = titleColor,
             leftAction = {
                 icon?.let {
                     DrawableResIcon(it)
@@ -50,9 +57,9 @@ fun SeekBarPreference(
             rightActions = {
                 if (showValue) {
                     Text(
-                        text = String.format(Locale.current.platformLocale, format, spValue.intValue),
+                        text = String.format(Locale.current.platformLocale, format, spValue),
                         fontSize = MiuixTheme.textStyles.body2.fontSize,
-                        color = SeekBarPreferenceDefaults.rightActionColors().color(true),
+                        color = valueColor.color(true),
                         textAlign = TextAlign.End,
                     )
                 }
@@ -60,40 +67,17 @@ fun SeekBarPreference(
         )
         Slider(
             modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 16.dp),
-            progress = spValue.intValue.toFloat(),
+            progress = spValue.toFloat(),
             minValue = min.toFloat(),
             maxValue = max.toFloat(),
             height = 28.dp,
+            enabled = enabled,
             onProgressChange = { newValue ->
                 val newInt = newValue.toInt()
-                spValue.intValue = newInt
+                spValue = newInt
                 key?.let { SafeSP.putAny(it, newInt) }
-                onValueChange?.let { it1 -> it1(newInt) }
+                updatedOnValueChange?.let { it1 -> it1(newInt) }
             }
         )
     }
-
-}
-
-object SeekBarPreferenceDefaults {
-
-    /**
-     * The default color of the value.
-     */
-    @Composable
-    fun rightActionColors() = RightActionColors(
-        color = MiuixTheme.colorScheme.onSurfaceVariantActions,
-        disabledColor = MiuixTheme.colorScheme.disabledOnSecondaryVariant
-    )
-
-}
-
-
-@Immutable
-class RightActionColors(
-    private val color: Color,
-    private val disabledColor: Color
-) {
-    @Stable
-    internal fun color(enabled: Boolean): Color = if (enabled) color else disabledColor
 }

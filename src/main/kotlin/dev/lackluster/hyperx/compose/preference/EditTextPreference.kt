@@ -1,34 +1,48 @@
 package dev.lackluster.hyperx.compose.preference
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.lackluster.hyperx.compose.R
 import dev.lackluster.hyperx.compose.activity.SafeSP
 import dev.lackluster.hyperx.compose.base.ImageIcon
 import dev.lackluster.hyperx.compose.base.DrawableResIcon
+import top.yukonga.miuix.kmp.basic.BasicComponent
+import top.yukonga.miuix.kmp.basic.BasicComponentColors
+import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
+import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextField
-import top.yukonga.miuix.kmp.extra.SuperArrow
 import top.yukonga.miuix.kmp.extra.SuperDialog
+import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.icon.icons.ArrowRight
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.MiuixPopupUtil.Companion.dismissDialog
 
 @Composable
@@ -42,10 +56,13 @@ fun EditTextPreference(
     dialogMessage: String? = null,
     isValueValid: ((value: Any) -> Boolean)? = null,
     valuePosition: ValuePosition = ValuePosition.VALUE_VIEW,
+    enabled: Boolean = true,
+    titleColor: BasicComponentColors = BasicComponentDefaults.titleColor(),
+    summaryColor: BasicComponentColors = BasicComponentDefaults.summaryColor(),
+    rightActionColor: RightActionColor = RightActionDefaults.rightActionColors(),
     onValueChange: ((String, Any) -> Unit)? = null,
 ) {
-    val dialogVisibility = remember { mutableStateOf(false) }
-    val spValue = remember { mutableStateOf(
+    var spValue by remember { mutableStateOf(
         key?.let {
             when (dataType) {
                 EditTextDataType.BOOLEAN -> SafeSP.getBoolean(key, defValue as? Boolean ?: false)
@@ -56,9 +73,11 @@ fun EditTextPreference(
             }
         } ?: defValue
     ) }
-    val stringValue = remember { derivedStateOf { spValue.value.toString() } }
+    val updatedOnValueChange by rememberUpdatedState(onValueChange)
+    val dialogVisibility = remember { mutableStateOf(false) }
+
     val doOnInputConfirm: (String) -> Unit = { newString: String ->
-        val oldValue = spValue.value
+        val oldValue = spValue
         val newValue = when (dataType) {
             EditTextDataType.BOOLEAN -> newString.toBooleanStrictOrNull()
             EditTextDataType.INT -> newString.toIntOrNull()
@@ -67,31 +86,57 @@ fun EditTextPreference(
             EditTextDataType.STRING -> newString
         }
         if (newValue != null && isValueValid?.invoke(newValue) != false && oldValue != newValue) {
-            spValue.value = newValue
+            spValue = newValue
             key?.let { SafeSP.putAny(it, newValue) }
-            onValueChange?.let { it(newString, newValue) }
+            updatedOnValueChange?.let { it(newString, newValue) }
         }
     }
 
-    SuperArrow(
+    BasicComponent(
+        insideMargin = PaddingValues((icon?.getHorizontalPadding() ?: 16.dp), 16.dp, 16.dp, 16.dp),
         title = title,
-        summary = stringValue.value.takeIf { valuePosition == ValuePosition.SUMMARY_VIEW && it.isNotBlank() } ?: summary,
+        titleColor = titleColor,
+        summary = spValue.toString().takeIf { valuePosition == ValuePosition.SUMMARY_VIEW && it.isNotBlank() } ?: summary,
+        summaryColor = summaryColor,
         leftAction = {
             icon?.let {
                 DrawableResIcon(it)
             }
         },
-        rightText = stringValue.value.takeIf { valuePosition == ValuePosition.VALUE_VIEW },
-        insideMargin = PaddingValues((icon?.getHorizontalPadding() ?: 16.dp), 16.dp, 16.dp, 16.dp),
+        rightActions = {
+            if (valuePosition == ValuePosition.VALUE_VIEW) {
+                Text(
+                    modifier = Modifier.widthIn(max = 130.dp),
+                    text = spValue.toString(),
+                    fontSize = MiuixTheme.textStyles.body2.fontSize,
+                    color = rightActionColor.color(enabled),
+                    textAlign = TextAlign.End,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2
+                )
+            }
+            Image(
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .size(10.dp, 16.dp),
+                imageVector = MiuixIcons.ArrowRight,
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(rightActionColor.color(enabled)),
+            )
+        },
         onClick = {
-            dialogVisibility.value = true
-        }
+            if (enabled) {
+                dialogVisibility.value = true
+            }
+        },
+        enabled = enabled
     )
+
     EditTextDialog(
         visibility = dialogVisibility,
         title = title,
         message = dialogMessage,
-        value = stringValue.value,
+        value = spValue.toString(),
         onInputConfirm = { newString ->
             doOnInputConfirm(newString)
         }

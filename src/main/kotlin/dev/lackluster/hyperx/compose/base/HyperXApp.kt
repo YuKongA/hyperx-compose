@@ -64,37 +64,26 @@ fun HyperXApp(
         val windowWidth by rememberUpdatedState(getWindowSize.width.dp / density.density)
         val windowHeight by rememberUpdatedState(getWindowSize.height.dp / density.density)
         val largeScreen by remember { derivedStateOf { (windowHeight >= 480.dp && windowWidth >= 840.dp) } }
-        val appRootLayout by remember { derivedStateOf {
-            if (autoSplitView.value) {
-                if (largeScreen) {
-                    if (isLandscape) {
-                        AppRootLayout.Split12
-                    } else {
-                        AppRootLayout.Split11
-                    }
-                } else {
-                    if (isLandscape) {
-                        AppRootLayout.Split11
-                    } else {
-                        AppRootLayout.Normal
-                    }
-                }
-            } else {
-                if (largeScreen) {
-                    AppRootLayout.LargeScreen
-                } else {
-                    AppRootLayout.Normal
-                }
-            }
-        } }
-        val normalLayoutPadding = if (appRootLayout == AppRootLayout.LargeScreen)
-            PaddingValues(horizontal = windowWidth * 0.1f)
-        else
-            PaddingValues(0.dp)
-        val splitRightWeight = if (appRootLayout == AppRootLayout.Split12)
-            2.0f
-        else
-            1.0f
+        val appRootLayout: AppRootLayout
+        val normalLayoutPadding: PaddingValues
+        val splitRightWeight: Float
+        if (autoSplitView.value && largeScreen && isLandscape) {
+            appRootLayout = AppRootLayout.Split12
+            normalLayoutPadding = PaddingValues(0.dp)
+            splitRightWeight = 2.0f
+        } else if (autoSplitView.value && (largeScreen || isLandscape)) {
+            appRootLayout = AppRootLayout.Split11
+            normalLayoutPadding = PaddingValues(0.dp)
+            splitRightWeight = 1.0f
+        } else if (largeScreen) {
+            appRootLayout = AppRootLayout.LargeScreen
+            normalLayoutPadding = PaddingValues(horizontal = windowWidth * 0.1f)
+            splitRightWeight = 1.0f
+        } else {
+            appRootLayout = AppRootLayout.Normal
+            normalLayoutPadding = PaddingValues(0.dp)
+            splitRightWeight = 1.0f
+        }
         if (appRootLayout == AppRootLayout.Split11 || appRootLayout == AppRootLayout.Split12) {
             SplitLayout(mainPageContent, emptyPageContent, otherPageBuilder, 1.0f, splitRightWeight)
         } else {
