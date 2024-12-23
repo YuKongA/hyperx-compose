@@ -50,8 +50,7 @@ val MiuixIcons.Back: ImageVector
                 lineTo(4.8009f, 12.2f)
                 close()
             }
-        }
-            .build()
+        }.build()
         return _back!!
     }
 private var _back: ImageVector? = null
