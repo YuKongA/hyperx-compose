@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -89,19 +90,22 @@ fun DropDownPreference(
                     Image(
                         modifier = imageModifier,
                         imageVector = it,
-                        contentDescription = null
+                        contentDescription = null,
+                        colorFilter = entry.iconTint?.let { tint -> ColorFilter.tint(tint) }
                     )
                 } ?: entry.iconRes?.let {
                     Image(
                         modifier = imageModifier,
                         painter = painterResource(it),
-                        contentDescription = null
+                        contentDescription = null,
+                        colorFilter = entry.iconTint?.let { tint -> ColorFilter.tint(tint) }
                     )
                 } ?: entry.iconBitmap?.let {
                     Image(
                         modifier = imageModifier,
                         bitmap = it,
-                        contentDescription = null
+                        contentDescription = null,
+                        colorFilter = entry.iconTint?.let { tint -> ColorFilter.tint(tint) }
                     )
                 }
             },
@@ -299,6 +303,7 @@ data class DropDownEntry(
     val iconRes: Int? = null,
     val iconBitmap: ImageBitmap? = null,
     val iconVector: ImageVector? = null,
+    val iconTint: Color? = null
 )
 
 enum class DropDownMode {
