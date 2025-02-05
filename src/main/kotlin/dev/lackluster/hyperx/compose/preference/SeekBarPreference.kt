@@ -1,18 +1,23 @@
 package dev.lackluster.hyperx.compose.preference
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.lackluster.hyperx.compose.R
 import dev.lackluster.hyperx.compose.activity.SafeSP
 import dev.lackluster.hyperx.compose.base.ImageIcon
 import dev.lackluster.hyperx.compose.base.DrawableResIcon
@@ -42,10 +47,28 @@ fun SeekBarPreference(
         key?.let { SafeSP.getInt(it, defValue) } ?: defValue
     ) }
     val updatedOnValueChange by rememberUpdatedState(onValueChange)
+    val dialogVisibility = remember { mutableStateOf(false) }
+
+    val doOnInputConfirm: (String) -> Unit = { newString: String ->
+        val oldValue = spValue
+        val newValue = newString.toIntOrNull()
+        if (newValue != null && newValue in min..max && oldValue != newValue) {
+            spValue = newValue
+            key?.let { SafeSP.putAny(it, newValue) }
+            updatedOnValueChange?.let { it(newValue) }
+        }
+    }
 
     Column {
         BasicComponent(
-            modifier = Modifier,
+            modifier = Modifier.clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                if (enabled) {
+                    dialogVisibility.value = true
+                }
+            },
             insideMargin = PaddingValues(16.dp, 16.dp, 16.dp, 12.dp),
             title = title,
             titleColor = titleColor,
@@ -63,7 +86,8 @@ fun SeekBarPreference(
                         textAlign = TextAlign.End,
                     )
                 }
-            }
+            },
+            enabled = enabled
         )
         Slider(
             modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 16.dp),
@@ -77,6 +101,15 @@ fun SeekBarPreference(
                 spValue = newInt
                 key?.let { SafeSP.putAny(it, newInt) }
                 updatedOnValueChange?.let { it1 -> it1(newInt) }
+            }
+        )
+        EditTextDialog(
+            visibility = dialogVisibility,
+            title = title,
+            message = stringResource(R.string.slider_dialog_message, defValue, min, max),
+            value = spValue.toString(),
+            onInputConfirm = { newString ->
+                doOnInputConfirm(newString)
             }
         )
     }
