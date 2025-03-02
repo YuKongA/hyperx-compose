@@ -28,8 +28,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -121,10 +119,6 @@ fun DropDownPreference(
     val held = remember { mutableStateOf<HoldDownInteraction.Hold?>(null) }
     val hapticFeedback = LocalHapticFeedback.current
     var alignLeft by rememberSaveable { mutableStateOf(true) }
-    var dropdownOffsetXPx by remember { mutableIntStateOf(0) }
-    var dropdownOffsetYPx by remember { mutableIntStateOf(0) }
-    var componentHeightPx by remember { mutableIntStateOf(0) }
-    var componentWidthPx by remember { mutableIntStateOf(0) }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -152,15 +146,6 @@ fun DropDownPreference(
                             alignLeft = eventChange.position.x < (size.width / 2)
                         }
                     }
-                }
-            }
-            .onGloballyPositioned { coordinates ->
-                if (isDropdownExpanded.value) {
-                    val positionInWindow = coordinates.positionInWindow()
-                    dropdownOffsetXPx = positionInWindow.x.toInt()
-                    dropdownOffsetYPx = positionInWindow.y.toInt()
-                    componentHeightPx = coordinates.size.height
-                    componentWidthPx = coordinates.size.width
                 }
             },
         interactionSource = interactionSource,
@@ -192,7 +177,7 @@ fun DropDownPreference(
                                     dialogMode = false
                                 ) { newValue ->
                                     spValue = newValue
-                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                                     key?.let { SafeSP.putAny(it, newValue) }
                                     updatedOnSelectedIndexChange?.let { it1 -> it1(newValue) }
                                     dismissPopup(showPopup)
@@ -233,7 +218,7 @@ fun DropDownPreference(
         onClick = {
             if (enabled) {
                 isDropdownExpanded.value = true
-                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                hapticFeedback.performHapticFeedback(HapticFeedbackType.ContextClick)
                 coroutineScope.launch {
                     interactionSource.emit(HoldDownInteraction.Hold().also {
                         held.value = it
@@ -264,7 +249,7 @@ fun DropDownPreference(
                                 dialogMode = true
                             ) { newValue ->
                                 spValue = newValue
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                                 key?.let { SafeSP.putAny(it, newValue) }
                                 updatedOnSelectedIndexChange?.let { it1 -> it1(newValue) }
                                 dismissDialog(isDropdownExpanded)
@@ -276,6 +261,7 @@ fun DropDownPreference(
                         text = stringResource(R.string.button_cancel),
                         minHeight = 50.dp,
                         onClick = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                             dismissDialog(isDropdownExpanded)
                         }
                     )

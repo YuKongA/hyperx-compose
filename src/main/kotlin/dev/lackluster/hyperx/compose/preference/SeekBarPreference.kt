@@ -107,6 +107,7 @@ fun SeekBarPreference(
             visibility = dialogVisibility,
             title = title,
             message = stringResource(R.string.slider_dialog_message, defValue, min, max),
+            placeholder = defValue.toString(),
             value = spValue.toString(),
             onInputConfirm = { newString ->
                 doOnInputConfirm(newString)

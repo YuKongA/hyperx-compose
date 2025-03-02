@@ -8,6 +8,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -44,7 +45,6 @@ import androidx.navigation.compose.rememberNavController
 import dev.lackluster.hyperx.compose.R
 import dev.lackluster.hyperx.compose.animation.SpringEasing
 import dev.lackluster.hyperx.compose.theme.AppTheme
-import top.yukonga.miuix.kmp.basic.Box
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.MiuixPopupUtil
 import top.yukonga.miuix.kmp.utils.getWindowSize

@@ -2,6 +2,7 @@ package dev.lackluster.hyperx.compose.base
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
@@ -17,7 +18,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.lackluster.hyperx.compose.preference.RightActionDefaults
-import top.yukonga.miuix.kmp.basic.Box
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -25,8 +25,8 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 fun IntegratedTextField(
     text: String,
     onTextChange: (String) -> Unit,
-    hint: String = "",
     modifier: Modifier = Modifier,
+    hint: String = "",
     enabled: Boolean = true,
     insideMargin: PaddingValues = PaddingValues(0.dp),
     interactionSource: MutableInteractionSource? = null,

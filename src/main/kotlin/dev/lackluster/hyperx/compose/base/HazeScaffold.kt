@@ -1,5 +1,6 @@
 package dev.lackluster.hyperx.compose.base
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -15,9 +16,8 @@ import androidx.compose.ui.unit.dp
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.haze
-import dev.chrisbanes.haze.hazeChild
-import top.yukonga.miuix.kmp.basic.Box
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 import top.yukonga.miuix.kmp.basic.MiuixFabPosition
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -51,7 +51,7 @@ fun HazeScaffold(
             topBar?.let {
                 if (blurTopBar) {
                     Box(
-                        modifier = Modifier.hazeChild(state = hazeState, style = hazeStyle)
+                        modifier = Modifier.hazeEffect(state = hazeState, style = hazeStyle)
                     ) {
                         it(adjustPadding)
                     }
@@ -64,7 +64,7 @@ fun HazeScaffold(
             bottomBar?.let {
                 if (blurBottomBar) {
                     Box(
-                        modifier = Modifier.hazeChild(state = hazeState, style = hazeStyle),
+                        modifier = Modifier.hazeEffect(state = hazeState, style = hazeStyle),
                     ) {
                         it(adjustPadding)
                     }
@@ -81,7 +81,7 @@ fun HazeScaffold(
         contentWindowInsets = contentWindowInsets,
     ) { contentPadding ->
         Box(
-            Modifier.haze(state = hazeState)
+            Modifier.hazeSource(state = hazeState)
         ) {
             content(PaddingValues(
                 start = contentPadding.calculateLeftPadding(LayoutDirection.Ltr) +

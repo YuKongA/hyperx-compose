@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -54,6 +56,7 @@ fun EditTextPreference(
     defValue: Any = "",
     dataType: EditTextDataType,
     dialogMessage: String? = null,
+    dialogPlaceholder: String? = null,
     isValueValid: ((value: Any) -> Boolean)? = null,
     valuePosition: ValuePosition = ValuePosition.VALUE_VIEW,
     enabled: Boolean = true,
@@ -136,6 +139,7 @@ fun EditTextPreference(
         visibility = dialogVisibility,
         title = title,
         message = dialogMessage,
+        placeholder = dialogPlaceholder ?: defValue.toString(),
         value = spValue.toString(),
         onInputConfirm = { newString ->
             doOnInputConfirm(newString)
@@ -148,12 +152,14 @@ fun EditTextDialog(
     visibility: MutableState<Boolean>,
     title: String?,
     message: String? = null,
+    placeholder: String? = null,
     value: String = "",
     onInputConfirm: ((value: String) -> Unit)? = null
 ) {
     val textState = remember { mutableStateOf(
         TextFieldValue(text = value, selection = TextRange(value.length))
     ) }
+    val hapticFeedback = LocalHapticFeedback.current
     val keyboard = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
     SuperDialog(
@@ -176,7 +182,9 @@ fun EditTextDialog(
         TextField(
             modifier = Modifier.padding(bottom = 12.dp).focusRequester(focusRequester),
             value = textState.value,
-            maxLines = 1,
+            singleLine = true,
+            label = placeholder ?: "",
+            useLabelAsPlaceholder = true,
             onValueChange = { textState.value = it }
         )
         Row(
@@ -188,6 +196,7 @@ fun EditTextDialog(
                 minHeight = 50.dp,
                 onClick = {
                     keyboard?.hide()
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                     dismissDialog(visibility)
                 }
             )
@@ -199,6 +208,7 @@ fun EditTextDialog(
                 minHeight = 50.dp,
                 onClick = {
                     keyboard?.hide()
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                     dismissDialog(visibility)
                     onInputConfirm?.let {
                         it(textState.value.text)
