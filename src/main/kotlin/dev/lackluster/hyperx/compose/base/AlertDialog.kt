@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.lackluster.hyperx.compose.R
@@ -27,6 +29,7 @@ fun AlertDialog(
     onNegativeButton: (() -> Unit)? = null,
     onPositiveButton: (() -> Unit)? = null,
 ) {
+    val hapticFeedback = LocalHapticFeedback.current
     SuperDialog(
         title = title,
         summary = message,
@@ -45,6 +48,7 @@ fun AlertDialog(
                     modifier = Modifier.weight(1f),
                     text = negativeText,
                     onClick = {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                         onNegativeButton?.let { it1 -> it1() } ?: dismissDialog(visibility)
                     }
                 )
@@ -58,6 +62,7 @@ fun AlertDialog(
                     text = positiveText,
                     colors = ButtonDefaults.textButtonColorsPrimary(),
                     onClick = {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                         onPositiveButton?.let { it1 -> it1() } ?: dismissDialog(visibility)
                     }
                 )
