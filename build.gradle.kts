@@ -36,8 +36,8 @@ android {
 @Suppress("UseTomlInstead")
 dependencies {
     api("top.yukonga.miuix.kmp:miuix:0.3.5")
-    api("dev.chrisbanes.haze:haze:1.4.0")
-    api("androidx.compose.foundation:foundation:1.7.8")
+    api("dev.chrisbanes.haze:haze:1.6.2")
+    api("androidx.compose.foundation:foundation:1.8.2")
     api("androidx.activity:activity-compose:1.10.1")
-    api("androidx.navigation:navigation-compose:2.8.8")
+    api("androidx.navigation:navigation-compose:2.9.0")
 }
