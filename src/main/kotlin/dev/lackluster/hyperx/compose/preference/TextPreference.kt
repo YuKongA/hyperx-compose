@@ -23,7 +23,7 @@ import top.yukonga.miuix.kmp.basic.BasicComponentColors
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.icon.MiuixIcons
-import top.yukonga.miuix.kmp.icon.icons.ArrowRight
+import top.yukonga.miuix.kmp.icon.icons.basic.ArrowRight
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 @Composable
@@ -67,7 +67,7 @@ fun TextPreference(
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .size(10.dp, 16.dp),
-                imageVector = MiuixIcons.ArrowRight,
+                imageVector = MiuixIcons.Basic.ArrowRight,
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(rightActionColor.color(enabled)),
             )

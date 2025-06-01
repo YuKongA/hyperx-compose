@@ -46,7 +46,7 @@ import dev.lackluster.hyperx.compose.R
 import dev.lackluster.hyperx.compose.animation.SpringEasing
 import dev.lackluster.hyperx.compose.theme.AppTheme
 import top.yukonga.miuix.kmp.theme.MiuixTheme
-import top.yukonga.miuix.kmp.utils.MiuixPopupUtil
+import top.yukonga.miuix.kmp.utils.MiuixPopupUtils
 import top.yukonga.miuix.kmp.utils.getWindowSize
 
 @Composable
@@ -89,7 +89,7 @@ fun HyperXApp(
         } else {
             NormalLayout(mainPageContent, otherPageBuilder, normalLayoutPadding)
         }
-        MiuixPopupUtil.MiuixPopupHost()
+        MiuixPopupUtils.MiuixPopupHost()
     }
 }
 

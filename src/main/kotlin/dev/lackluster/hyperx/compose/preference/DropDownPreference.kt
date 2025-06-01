@@ -52,11 +52,9 @@ import top.yukonga.miuix.kmp.extra.SpinnerEntry
 import top.yukonga.miuix.kmp.extra.SpinnerItemImpl
 import top.yukonga.miuix.kmp.extra.SuperDialog
 import top.yukonga.miuix.kmp.icon.MiuixIcons
-import top.yukonga.miuix.kmp.icon.icons.ArrowUpDownIntegrated
+import top.yukonga.miuix.kmp.icon.icons.basic.ArrowUpDownIntegrated
 import top.yukonga.miuix.kmp.interfaces.HoldDownInteraction
 import top.yukonga.miuix.kmp.theme.MiuixTheme
-import top.yukonga.miuix.kmp.utils.MiuixPopupUtil.Companion.dismissDialog
-import top.yukonga.miuix.kmp.utils.MiuixPopupUtil.Companion.dismissPopup
 
 @Composable
 fun DropDownPreference(
@@ -116,13 +114,14 @@ fun DropDownPreference(
     val isDropdownExpanded = remember { mutableStateOf(false) }
     val showPopup = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val held = remember { mutableStateOf<HoldDownInteraction.Hold?>(null) }
+    val held = remember { mutableStateOf<HoldDownInteraction.HoldDown?>(null) }
     val hapticFeedback = LocalHapticFeedback.current
     var alignLeft by rememberSaveable { mutableStateOf(true) }
 
     DisposableEffect(Unit) {
         onDispose {
-            dismissPopup(isDropdownExpanded)
+            showPopup.value = false
+            isDropdownExpanded.value = false
         }
     }
 
@@ -164,6 +163,7 @@ fun DropDownPreference(
                         else
                             PopupPositionProvider.Align.Left,
                         onDismissRequest = {
+                            showPopup.value = false
                             isDropdownExpanded.value = false
                         }
                     ) {
@@ -180,7 +180,7 @@ fun DropDownPreference(
                                     hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                                     key?.let { SafeSP.putAny(it, newValue) }
                                     updatedOnSelectedIndexChange?.let { it1 -> it1(newValue) }
-                                    dismissPopup(showPopup)
+                                    showPopup.value = false
                                     isDropdownExpanded.value = false
                                 }
                             }
@@ -210,7 +210,7 @@ fun DropDownPreference(
                     .padding(start = 8.dp)
                     .size(10.dp, 16.dp)
                     .align(Alignment.CenterVertically),
-                imageVector = MiuixIcons.ArrowUpDownIntegrated,
+                imageVector = MiuixIcons.Basic.ArrowUpDownIntegrated,
                 colorFilter = ColorFilter.tint(rightActionColor.color(enabled)),
                 contentDescription = null
             )
@@ -220,7 +220,7 @@ fun DropDownPreference(
                 isDropdownExpanded.value = true
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ContextClick)
                 coroutineScope.launch {
-                    interactionSource.emit(HoldDownInteraction.Hold().also {
+                    interactionSource.emit(HoldDownInteraction.HoldDown().also {
                         held.value = it
                     })
                 }
@@ -233,7 +233,7 @@ fun DropDownPreference(
             title = title,
             show = isDropdownExpanded,
             onDismissRequest = {
-                dismissDialog(isDropdownExpanded)
+                isDropdownExpanded.value = false
             },
             insideMargin = DpSize(0.dp, 24.dp)
         ) {
@@ -252,7 +252,7 @@ fun DropDownPreference(
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                                 key?.let { SafeSP.putAny(it, newValue) }
                                 updatedOnSelectedIndexChange?.let { it1 -> it1(newValue) }
-                                dismissDialog(isDropdownExpanded)
+                                isDropdownExpanded.value = false
                             }
                         }
                     }
@@ -262,7 +262,7 @@ fun DropDownPreference(
                         minHeight = 50.dp,
                         onClick = {
                             hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                            dismissDialog(isDropdownExpanded)
+                            isDropdownExpanded.value = false
                         }
                     )
                 }

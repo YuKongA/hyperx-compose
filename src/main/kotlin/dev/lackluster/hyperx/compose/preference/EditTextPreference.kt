@@ -43,9 +43,8 @@ import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.extra.SuperDialog
 import top.yukonga.miuix.kmp.icon.MiuixIcons
-import top.yukonga.miuix.kmp.icon.icons.ArrowRight
+import top.yukonga.miuix.kmp.icon.icons.basic.ArrowRight
 import top.yukonga.miuix.kmp.theme.MiuixTheme
-import top.yukonga.miuix.kmp.utils.MiuixPopupUtil.Companion.dismissDialog
 
 @Composable
 fun EditTextPreference(
@@ -68,7 +67,7 @@ fun EditTextPreference(
     var spValue by remember { mutableStateOf(
         key?.let {
             when (dataType) {
-                EditTextDataType.BOOLEAN -> SafeSP.getBoolean(key, defValue as? Boolean ?: false)
+                EditTextDataType.BOOLEAN -> SafeSP.getBoolean(key, defValue as? Boolean == true)
                 EditTextDataType.INT -> SafeSP.getInt(key, defValue as? Int ?: 0)
                 EditTextDataType.FLOAT -> SafeSP.getFloat(key, defValue as? Float ?: 0.0f)
                 EditTextDataType.LONG -> SafeSP.getLong(key, defValue as? Long ?: 0L)
@@ -122,7 +121,7 @@ fun EditTextPreference(
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .size(10.dp, 16.dp),
-                imageVector = MiuixIcons.ArrowRight,
+                imageVector = MiuixIcons.Basic.ArrowRight,
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(rightActionColor.color(enabled)),
             )
@@ -169,7 +168,7 @@ fun EditTextDialog(
         onDismissRequest = {
             if (visibility.value) {
                 keyboard?.hide()
-                dismissDialog(visibility)
+                visibility.value = false
             }
         }
     ) {
@@ -197,7 +196,7 @@ fun EditTextDialog(
                 onClick = {
                     keyboard?.hide()
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                    dismissDialog(visibility)
+                    visibility.value = false
                 }
             )
             Spacer(Modifier.width(12.dp))
@@ -209,7 +208,7 @@ fun EditTextDialog(
                 onClick = {
                     keyboard?.hide()
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                    dismissDialog(visibility)
+                    visibility.value = false
                     onInputConfirm?.let {
                         it(textState.value.text)
                     }

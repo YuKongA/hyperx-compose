@@ -7,13 +7,17 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.captionBar
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -26,21 +30,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.lackluster.hyperx.compose.icon.Back
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
-import top.yukonga.miuix.kmp.basic.LazyColumn
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
 import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.icon.icons.useful.Back
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.getWindowSize
+import top.yukonga.miuix.kmp.utils.overScrollVertical
+import top.yukonga.miuix.kmp.utils.scrollEndHaptic
 
 @Composable
 fun BasePage(
@@ -63,7 +69,7 @@ fun BasePage(
         ) {
             Icon(
                 modifier = Modifier.size(26.dp),
-                imageVector = MiuixIcons.Back,
+                imageVector = MiuixIcons.Useful.Back,
                 contentDescription = "Back",
                 tint = MiuixTheme.colorScheme.onSurfaceSecondary
             )
@@ -98,6 +104,9 @@ fun BasePage(
         modifier = Modifier.fillMaxSize(),
         topBar = { contentPadding ->
             TopAppBar(
+                modifier = Modifier
+                    .windowInsetsPadding(WindowInsets.statusBars.only(WindowInsetsSides.Top))
+                    .windowInsetsPadding(WindowInsets.captionBar.only(WindowInsetsSides.Top)),
                 color = topAppBarBackground.copy(
                     if (topBarBlurState) 0f else 1f
                 ),
@@ -121,11 +130,13 @@ fun BasePage(
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
+                .overScrollVertical()
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .scrollEndHaptic()
                 .height(getWindowSize().height.dp)
                 .background(MiuixTheme.colorScheme.background),
             state = listState,
             contentPadding = paddingValues,
-            topAppBarScrollBehavior = scrollBehavior,
             content = content
         )
     }

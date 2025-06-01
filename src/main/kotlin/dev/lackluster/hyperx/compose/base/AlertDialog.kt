@@ -15,7 +15,6 @@ import dev.lackluster.hyperx.compose.R
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.extra.SuperDialog
-import top.yukonga.miuix.kmp.utils.MiuixPopupUtil.Companion.dismissDialog
 
 @Composable
 fun AlertDialog(
@@ -36,7 +35,7 @@ fun AlertDialog(
         show = visibility,
         onDismissRequest = {
             if (cancelable) {
-                dismissDialog(visibility)
+                visibility.value = false
             }
         }
     ) {
@@ -49,7 +48,7 @@ fun AlertDialog(
                     text = negativeText,
                     onClick = {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                        onNegativeButton?.let { it1 -> it1() } ?: dismissDialog(visibility)
+                        onNegativeButton?.let { it1 -> it1() } ?: visibility.apply { value = false }
                     }
                 )
             }
@@ -63,7 +62,7 @@ fun AlertDialog(
                     colors = ButtonDefaults.textButtonColorsPrimary(),
                     onClick = {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                        onPositiveButton?.let { it1 -> it1() } ?: dismissDialog(visibility)
+                        onPositiveButton?.let { it1 -> it1() } ?: visibility.apply { value = false }
                     }
                 )
             }

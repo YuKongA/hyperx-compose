@@ -18,7 +18,7 @@ import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
-import top.yukonga.miuix.kmp.basic.MiuixFabPosition
+import top.yukonga.miuix.kmp.basic.FabPosition
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -28,7 +28,7 @@ fun HazeScaffold(
     topBar: @Composable ((contentPadding: PaddingValues) -> Unit)? = null,
     bottomBar: @Composable ((contentPadding: PaddingValues) -> Unit)? = null,
     floatingActionButton: @Composable () -> Unit = {},
-    floatingActionButtonPosition: MiuixFabPosition = MiuixFabPosition.End,
+    floatingActionButtonPosition: FabPosition = FabPosition.End,
     snackbarHost: @Composable () -> Unit = {},
     containerColor: Color = MiuixTheme.colorScheme.background,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Vertical),
