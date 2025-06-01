@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.captionBar
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -105,8 +103,7 @@ fun BasePage(
         topBar = { contentPadding ->
             TopAppBar(
                 modifier = Modifier
-                    .windowInsetsPadding(WindowInsets.statusBars.only(WindowInsetsSides.Top))
-                    .windowInsetsPadding(WindowInsets.captionBar.only(WindowInsetsSides.Top)),
+                    .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top)),
                 color = topAppBarBackground.copy(
                     if (topBarBlurState) 0f else 1f
                 ),
