@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -40,4 +41,7 @@ dependencies {
     api("androidx.compose.foundation:foundation:1.8.2")
     api("androidx.activity:activity-compose:1.10.1")
     api("androidx.navigation:navigation-compose:2.9.0")
+    api("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
+    implementation("io.github.biezhi:TinyPinyin:2.0.3.RELEASE")
+    implementation("io.coil-kt.coil3:coil-compose:3.2.0")
 }
