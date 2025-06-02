@@ -52,6 +52,7 @@ fun Hint(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
+                modifier = Modifier.weight(1.0f),
                 text = text,
                 fontSize = MiuixTheme.textStyles.subtitle.fontSize,
                 fontWeight = FontWeight.Medium,
