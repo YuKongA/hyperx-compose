@@ -1,6 +1,7 @@
 package dev.lackluster.hyperx.compose.viewmodel
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.os.Parcelable
@@ -12,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.github.promeg.pinyinhelper.Pinyin
-import dev.lackluster.hyperx.compose.activity.HyperXActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
@@ -63,11 +63,11 @@ class AppListViewModel(
     }
 
     @SuppressLint("QueryPermissionsNeeded")
-    suspend fun fetchAppList() {
+    suspend fun fetchAppList(context: Context) {
         isRefreshing = true
 
         withContext(Dispatchers.IO) {
-            val pm = HyperXActivity.context.packageManager
+            val pm = context.packageManager
 
             val start = SystemClock.elapsedRealtime()
 
