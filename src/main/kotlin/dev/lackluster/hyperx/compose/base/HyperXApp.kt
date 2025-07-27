@@ -39,11 +39,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import dev.lackluster.hyperx.compose.R
-import dev.lackluster.hyperx.compose.animation.SpringEasing
+import dev.lackluster.hyperx.compose.activity.HyperXActivity
+import dev.lackluster.hyperx.compose.navigation.MiuixNavHost
+import dev.lackluster.hyperx.compose.navigation.MiuixNavHostDefaults
+import dev.lackluster.hyperx.compose.navigation.miuixComposable
+import dev.lackluster.hyperx.compose.navigation.rememberMiuixNavController
 import dev.lackluster.hyperx.compose.theme.AppTheme
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.MiuixPopupUtils
@@ -99,9 +100,7 @@ fun NormalLayout(
     otherPageBuilder: (NavGraphBuilder.(navController: NavHostController, adjustPadding: PaddingValues, mode: BasePageDefaults.Mode) -> Unit)? = null,
     extraPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    val easing = HyperXAppDefaults.NavAnimationEasing
-    val duration = easing.duration.toInt()
-    val navController = rememberNavController()
+    val navController = rememberMiuixNavController()
     val layoutDirection = LocalLayoutDirection.current
     val systemBarInsets = WindowInsets.systemBars.add(WindowInsets.displayCutout).only(WindowInsetsSides.Horizontal).asPaddingValues()
     val contentPadding = systemBarInsets.let {
@@ -112,35 +111,13 @@ fun NormalLayout(
             bottom = extraPadding.calculateBottomPadding()
         )
     }
-    NavHost(
+    MiuixNavHost(
+        modifier = Modifier.background(Color.Black),
         navController = navController,
         startDestination = HyperXAppDefaults.PAGE_MAIN,
-        enterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { it },
-                animationSpec = tween(duration, 0, easing)
-            )
-        },
-        exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { -it / 4 },
-                animationSpec = tween(duration, 0, easing)
-            )
-        },
-        popEnterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { -it / 4 },
-                animationSpec = tween(duration, 0, easing)
-            )
-        },
-        popExitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { it },
-                animationSpec = tween(duration, 0, easing)
-            )
-        }
+        cornerRadius = HyperXActivity.screenCornerRadius.intValue.dp
     ) {
-        composable(HyperXAppDefaults.PAGE_MAIN) { mainPageContent(navController, contentPadding, BasePageDefaults.Mode.FULL) }
+        miuixComposable(HyperXAppDefaults.PAGE_MAIN) { mainPageContent(navController, contentPadding, BasePageDefaults.Mode.FULL) }
         otherPageBuilder?.let { it(navController, contentPadding, BasePageDefaults.Mode.FULL) }
     }
 }
@@ -153,9 +130,9 @@ fun SplitLayout(
     leftWeight: Float = 1.0f,
     rightWeight: Float = 1.0f
 ) {
-    val easing = HyperXAppDefaults.NavAnimationEasing
-    val duration = easing.duration.toInt()
-    val navController = rememberNavController()
+    val easing = MiuixNavHostDefaults.NavAnimationEasing
+    val duration = 500
+    val navController = rememberMiuixNavController()
     val layoutDirection = LocalLayoutDirection.current
     val systemBarInsets = WindowInsets.systemBars.add(WindowInsets.displayCutout).only(WindowInsetsSides.Horizontal).asPaddingValues()
     val contentPaddingLeft = systemBarInsets.let {
@@ -185,7 +162,7 @@ fun SplitLayout(
             mainPageContent(navController, contentPaddingLeft, BasePageDefaults.Mode.SPLIT_LEFT)
         }
         VerticalDivider(thickness = 0.75.dp, color = MiuixTheme.colorScheme.dividerLine)
-        NavHost(
+        MiuixNavHost(
             navController = navController,
             startDestination = HyperXAppDefaults.PAGE_EMPTY,
             modifier = Modifier.weight(rightWeight),
@@ -214,7 +191,7 @@ fun SplitLayout(
                 )
             }
         ) {
-            composable(
+            miuixComposable(
                 HyperXAppDefaults.PAGE_EMPTY,
                 exitTransition = { fadeOut() },
                 popEnterTransition = { fadeIn() }
@@ -242,8 +219,6 @@ fun DefaultEmptyPage(
 object HyperXAppDefaults {
     const val PAGE_MAIN = "MainPage"
     const val PAGE_EMPTY = "EmptyPage"
-
-    val NavAnimationEasing = SpringEasing(0.95f, 0.4f)
 }
 
 enum class AppRootLayout {
