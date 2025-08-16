@@ -7,8 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import top.yukonga.miuix.kmp.basic.Card
-import top.yukonga.miuix.kmp.basic.CardDefaults
+import dev.lackluster.hyperx.compose.base.Card
+import dev.lackluster.hyperx.compose.base.CardColors
+import dev.lackluster.hyperx.compose.base.CardDefaults
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -18,7 +19,7 @@ fun PreferenceGroup(
     first: Boolean = false,
     last: Boolean = false,
     titleColor: Color = MiuixTheme.colorScheme.onBackgroundVariant,
-    cardColor: Color = CardDefaults.DefaultColor(),
+    cardColor: CardColors = CardDefaults.cardColors(),
     content: @Composable ColumnScope.() -> Unit
 ) {
     title?.let {
@@ -37,7 +38,7 @@ fun PreferenceGroup(
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
             .padding(bottom = cardBottomPadding, top = cardTopPadding),
-        color = cardColor,
+        colors = cardColor,
         content = content
     )
 }
