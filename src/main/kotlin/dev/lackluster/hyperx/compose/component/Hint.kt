@@ -38,8 +38,7 @@ fun Hint(
     Card(
         modifier = modifier
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(backgroundColor, foregroundColor),
-        contentPadding = contentPadding
+        colors = CardDefaults.cardColors(backgroundColor, foregroundColor)
     ) {
         Row(
             modifier = Modifier
