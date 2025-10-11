@@ -30,8 +30,6 @@ fun FullScreenDialog(
     adjustPadding: PaddingValues,
     title: String,
     blurEnabled: MutableState<Boolean> = mutableStateOf(true),
-    blurTintAlphaLight: MutableFloatState = mutableFloatStateOf(0.6f),
-    blurTintAlphaDark: MutableFloatState = mutableFloatStateOf(0.5f),
     mode: BasePageDefaults.Mode = BasePageDefaults.Mode.FULL,
     onNegativeButton: (() -> Unit)? = {
         navController.popBackStack()
@@ -53,8 +51,6 @@ fun FullScreenDialog(
         adjustPadding,
         title,
         blurEnabled,
-        blurTintAlphaLight,
-        blurTintAlphaDark,
         mode,
         navigationIcon = { padding ->
             IconButton(

@@ -16,9 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.lackluster.hyperx.compose.R
-import dev.lackluster.hyperx.compose.base.Card
-import dev.lackluster.hyperx.compose.base.CardDefaults
 import dev.lackluster.hyperx.compose.icon.HintClose
+import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
@@ -27,18 +27,19 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 @Composable
 fun Hint(
-    modifier: Modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+    modifier: Modifier = Modifier,
     text: String,
     foregroundColor: Color = colorResource(R.color.hyperx_hint_fg),
     backgroundColor: Color = colorResource(R.color.hyperx_hint_bg),
-    contentPadding: PaddingValues = CardDefaults.contentPadding,
+    contentPadding: PaddingValues = PaddingValues(16.dp),
     closeable: Boolean = false,
     onClose: (() -> Unit)? = null
 ) {
     Card(
         modifier = modifier
+            .padding(horizontal = 12.dp, vertical = 6.dp)
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(backgroundColor, foregroundColor)
+        colors = CardDefaults.defaultColors(backgroundColor, foregroundColor)
     ) {
         Row(
             modifier = Modifier

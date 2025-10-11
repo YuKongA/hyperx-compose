@@ -19,18 +19,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import androidx.navigation.NavController
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
@@ -52,8 +48,6 @@ fun BasePage(
     adjustPadding: PaddingValues,
     title: String,
     blurEnabled: MutableState<Boolean> = mutableStateOf(true),
-    blurTintAlphaLight: MutableFloatState = mutableFloatStateOf(0.6f),
-    blurTintAlphaDark: MutableFloatState = mutableFloatStateOf(0.5f),
     mode: BasePageDefaults.Mode = BasePageDefaults.Mode.FULL,
     navigationIcon: @Composable (padding: PaddingValues) -> Unit = { padding ->
         IconButton(
@@ -76,22 +70,15 @@ fun BasePage(
     actions: @Composable RowScope.(padding: PaddingValues) -> Unit = {},
     content: LazyListScope.() -> Unit
 ) {
-    val topAppBarBackground = MiuixTheme.colorScheme.background
     val scrollBehavior = MiuixScrollBehavior(rememberTopAppBarState())
+    val hazeTint = MiuixTheme.colorScheme.background.copy(
+        if (scrollBehavior.state.collapsedFraction <= 0f) 1f
+        else lerp(1f, 0.67f, (scrollBehavior.state.collapsedFraction))
+    )
     val listState = rememberLazyListState()
-    val topBarBlurState by remember {
-        derivedStateOf {
-            blurEnabled.value &&
-                    scrollBehavior.state.collapsedFraction >= 1.0f &&
-                    (listState.isScrollInProgress || listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 12)
-        }
-    }
-    val topBarBlurTintAlpha = remember { mutableFloatStateOf(
-        if (topAppBarBackground.luminance() >= 0.5f) blurTintAlphaLight.floatValue
-        else blurTintAlphaDark.floatValue
-    ) }
     val layoutDirection = LocalLayoutDirection.current
-    val systemBarInsets = WindowInsets.systemBars.add(WindowInsets.displayCutout).only(WindowInsetsSides.Horizontal).asPaddingValues()
+    val systemBarInsets =
+        WindowInsets.systemBars.add(WindowInsets.displayCutout).only(WindowInsetsSides.Horizontal).asPaddingValues()
     val navigationIconPadding = PaddingValues.Absolute(
         left = if (mode != BasePageDefaults.Mode.SPLIT_RIGHT) systemBarInsets.calculateLeftPadding(layoutDirection) else 0.dp
     )
@@ -104,9 +91,7 @@ fun BasePage(
             TopAppBar(
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top)),
-                color = topAppBarBackground.copy(
-                    if (topBarBlurState) 0f else 1f
-                ),
+                color = if (blurEnabled.value) Color.Transparent else MiuixTheme.colorScheme.background,
                 title = title,
                 scrollBehavior = scrollBehavior,
                 navigationIcon = { navigationIcon.invoke(navigationIconPadding) },
@@ -117,11 +102,10 @@ fun BasePage(
         },
         blurTopBar = blurEnabled.value,
         hazeStyle = HazeStyle(
-            blurRadius = 66.dp,
-            backgroundColor = topAppBarBackground,
-            tint = HazeTint(
-                topAppBarBackground.copy(alpha = topBarBlurTintAlpha.floatValue),
-            )
+            blurRadius = 25.dp,
+            noiseFactor = 0f,
+            backgroundColor = MiuixTheme.colorScheme.background,
+            tint = HazeTint(hazeTint)
         ),
         adjustPadding = adjustPadding,
     ) { paddingValues ->
