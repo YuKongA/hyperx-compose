@@ -28,6 +28,7 @@ import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
 import top.yukonga.miuix.kmp.basic.Slider
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+import kotlin.text.toInt
 
 @Composable
 fun SeekBarPreference(
@@ -92,12 +93,11 @@ fun SeekBarPreference(
         )
         Slider(
             modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 16.dp),
-            progress = spValue.toFloat(),
-            minValue = min.toFloat(),
-            maxValue = max.toFloat(),
+            value = spValue.toFloat(),
+            valueRange = min.toFloat()..max.toFloat(),
             height = 28.dp,
             enabled = enabled,
-            onProgressChange = { newValue ->
+            onValueChange = { newValue: Float ->
                 val newInt = newValue.toInt()
                 spValue = newInt
                 key?.let { SafeSP.putAny(it, newInt) }
@@ -180,12 +180,11 @@ fun SeekBarPreference(
         )
         Slider(
             modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 16.dp),
-            progress = spValue,
-            minValue = min,
-            maxValue = max,
+            value = spValue,
+            valueRange = min..max,
             height = 28.dp,
             enabled = enabled,
-            onProgressChange = { newValue ->
+            onValueChange = { newValue: Float ->
                 spValue = newValue
                 key?.let { SafeSP.putAny(it, newValue) }
                 updatedOnValueChange?.let { it1 -> it1(newValue) }

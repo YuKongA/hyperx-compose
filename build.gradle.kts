@@ -10,6 +10,8 @@ plugins {
 android {
     namespace = "dev.lackluster.hyperx.compose"
     compileSdk = 36
+    compileSdkMinor = 1
+    buildToolsVersion = "36.1.0"
 
     defaultConfig {
         minSdk = 31
@@ -35,12 +37,13 @@ android {
 
 @Suppress("UseTomlInstead")
 dependencies {
-    api("top.yukonga.miuix.kmp:miuix:0.5.2")
-    api("dev.chrisbanes.haze:haze:1.6.10")
+    api("top.yukonga.miuix.kmp:miuix-android:0.6.1")
+    api("dev.chrisbanes.haze:haze-android:1.6.10")
+    api("io.github.kyant0:capsule:2.1.1")
     api("androidx.compose.foundation:foundation:1.9.4")
     api("androidx.activity:activity-compose:1.11.0")
-    api("androidx.navigation:navigation-compose:2.9.5")
-    api("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
+    api("androidx.navigation:navigation-compose:2.9.6")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
     implementation("io.github.biezhi:TinyPinyin:2.0.3.RELEASE")
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
 }
