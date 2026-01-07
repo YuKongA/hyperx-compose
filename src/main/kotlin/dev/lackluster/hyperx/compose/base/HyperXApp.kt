@@ -33,8 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
@@ -48,7 +48,6 @@ import dev.lackluster.hyperx.compose.navigation.rememberMiuixNavController
 import dev.lackluster.hyperx.compose.theme.AppTheme
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.MiuixPopupUtils
-import top.yukonga.miuix.kmp.utils.getWindowSize
 
 @Composable
 fun HyperXApp(
@@ -60,10 +59,9 @@ fun HyperXApp(
     AppTheme {
         val configuration = LocalConfiguration.current
         val isLandscape by rememberUpdatedState(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        val density = LocalDensity.current
-        val getWindowSize by rememberUpdatedState(getWindowSize())
-        val windowWidth by rememberUpdatedState(getWindowSize.width.dp / density.density)
-        val windowHeight by rememberUpdatedState(getWindowSize.height.dp / density.density)
+        val windowInfo = LocalWindowInfo.current
+        val windowWidth by rememberUpdatedState(windowInfo.containerDpSize.width)
+        val windowHeight by rememberUpdatedState(windowInfo.containerDpSize.height)
         val largeScreen by remember { derivedStateOf { (windowHeight >= 480.dp && windowWidth >= 840.dp) } }
         val appRootLayout: AppRootLayout
         val normalLayoutPadding: PaddingValues
@@ -107,7 +105,7 @@ fun NormalLayout(
         PaddingValues.Absolute(
             left = it.calculateLeftPadding(layoutDirection) + extraPadding.calculateLeftPadding(layoutDirection),
             top = extraPadding.calculateTopPadding(),
-            right = it.calculateRightPadding(layoutDirection)+ extraPadding.calculateRightPadding(layoutDirection),
+            right = it.calculateRightPadding(layoutDirection) + extraPadding.calculateRightPadding(layoutDirection),
             bottom = extraPadding.calculateBottomPadding()
         )
     }
@@ -115,7 +113,7 @@ fun NormalLayout(
         modifier = Modifier.background(Color.Black),
         navController = navController,
         startDestination = HyperXAppDefaults.PAGE_MAIN,
-        cornerRadius = HyperXActivity.screenCornerRadius.intValue.dp
+        cornerRadius = HyperXActivity.screenCornerRadius.value
     ) {
         miuixComposable(HyperXAppDefaults.PAGE_MAIN) { mainPageContent(navController, contentPadding, BasePageDefaults.Mode.FULL) }
         otherPageBuilder?.let { it(navController, contentPadding, BasePageDefaults.Mode.FULL) }
@@ -154,7 +152,7 @@ fun SplitLayout(
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .background(MiuixTheme.colorScheme.background)
+            .background(MiuixTheme.colorScheme.surface)
     ) {
         Box(
             modifier = Modifier.weight(leftWeight)
@@ -234,7 +232,11 @@ fun VerticalDivider(
     thickness: Dp,
     color: Color,
 ) =
-    Canvas(modifier.fillMaxHeight().width(thickness)) {
+    Canvas(
+        modifier
+            .fillMaxHeight()
+            .width(thickness)
+    ) {
         drawLine(
             color = color,
             strokeWidth = thickness.toPx(),

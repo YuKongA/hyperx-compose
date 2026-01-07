@@ -32,8 +32,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.lackluster.hyperx.compose.R
 import dev.lackluster.hyperx.compose.activity.SafeSP
-import dev.lackluster.hyperx.compose.base.ImageIcon
 import dev.lackluster.hyperx.compose.base.DrawableResIcon
+import dev.lackluster.hyperx.compose.base.ImageIcon
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.BasicComponentColors
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
@@ -43,7 +43,7 @@ import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.extra.SuperDialog
 import top.yukonga.miuix.kmp.icon.MiuixIcons
-import top.yukonga.miuix.kmp.icon.icons.basic.ArrowRight
+import top.yukonga.miuix.kmp.icon.basic.ArrowRight
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 @Composable
@@ -64,17 +64,19 @@ fun EditTextPreference(
     rightActionColor: RightActionColor = RightActionDefaults.rightActionColors(),
     onValueChange: ((String, Any) -> Unit)? = null,
 ) {
-    var spValue by remember { mutableStateOf(
-        key?.let {
-            when (dataType) {
-                EditTextDataType.BOOLEAN -> SafeSP.getBoolean(key, defValue as? Boolean == true)
-                EditTextDataType.INT -> SafeSP.getInt(key, defValue as? Int ?: 0)
-                EditTextDataType.FLOAT -> SafeSP.getFloat(key, defValue as? Float ?: 0.0f)
-                EditTextDataType.LONG -> SafeSP.getLong(key, defValue as? Long ?: 0L)
-                EditTextDataType.STRING -> SafeSP.getString(key, defValue as? String ?: "")
-            }
-        } ?: defValue
-    ) }
+    var spValue by remember {
+        mutableStateOf(
+            key?.let {
+                when (dataType) {
+                    EditTextDataType.BOOLEAN -> SafeSP.getBoolean(key, defValue as? Boolean == true)
+                    EditTextDataType.INT -> SafeSP.getInt(key, defValue as? Int ?: 0)
+                    EditTextDataType.FLOAT -> SafeSP.getFloat(key, defValue as? Float ?: 0.0f)
+                    EditTextDataType.LONG -> SafeSP.getLong(key, defValue as? Long ?: 0L)
+                    EditTextDataType.STRING -> SafeSP.getString(key, defValue as? String ?: "")
+                }
+            } ?: defValue
+        )
+    }
     val updatedOnValueChange by rememberUpdatedState(onValueChange)
     val dialogVisibility = remember { mutableStateOf(false) }
 
@@ -100,12 +102,12 @@ fun EditTextPreference(
         titleColor = titleColor,
         summary = spValue.toString().takeIf { valuePosition == ValuePosition.SUMMARY_VIEW && it.isNotBlank() } ?: summary,
         summaryColor = summaryColor,
-        leftAction = {
+        startAction = {
             icon?.let {
                 DrawableResIcon(it)
             }
         },
-        rightActions = {
+        endActions = {
             if (valuePosition == ValuePosition.VALUE_VIEW) {
                 Text(
                     modifier = Modifier.widthIn(max = 130.dp),
@@ -155,9 +157,11 @@ fun EditTextDialog(
     value: String = "",
     onInputConfirm: ((value: String) -> Unit)? = null
 ) {
-    val textState = remember { mutableStateOf(
-        TextFieldValue(text = value, selection = TextRange(value.length))
-    ) }
+    val textState = remember {
+        mutableStateOf(
+            TextFieldValue(text = value, selection = TextRange(value.length))
+        )
+    }
     val hapticFeedback = LocalHapticFeedback.current
     val keyboard = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
@@ -179,7 +183,9 @@ fun EditTextDialog(
             }
         }
         TextField(
-            modifier = Modifier.padding(bottom = 12.dp).focusRequester(focusRequester),
+            modifier = Modifier
+                .padding(bottom = 12.dp)
+                .focusRequester(focusRequester),
             value = textState.value,
             singleLine = true,
             label = placeholder ?: "",

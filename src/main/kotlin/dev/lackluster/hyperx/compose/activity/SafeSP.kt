@@ -26,7 +26,7 @@ object SafeSP {
         mSP!!.edit().apply {
             when (any) {
                 is Boolean -> putBoolean(key, any)
-                is String ->  putString(key, any)
+                is String -> putString(key, any)
                 is Int -> putInt(key, any)
                 is Float -> putFloat(key, any)
                 is Long -> putLong(key, any)

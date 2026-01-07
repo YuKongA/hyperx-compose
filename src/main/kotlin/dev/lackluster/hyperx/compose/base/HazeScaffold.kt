@@ -30,7 +30,7 @@ fun HazeScaffold(
     floatingActionButton: @Composable () -> Unit = {},
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     snackbarHost: @Composable () -> Unit = {},
-    containerColor: Color = MiuixTheme.colorScheme.background,
+    containerColor: Color = MiuixTheme.colorScheme.surface,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Vertical),
     blurTopBar: Boolean = false,
     blurBottomBar: Boolean = false,

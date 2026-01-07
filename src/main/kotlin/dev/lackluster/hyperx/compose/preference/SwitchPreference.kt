@@ -10,8 +10,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import dev.lackluster.hyperx.compose.activity.SafeSP
-import dev.lackluster.hyperx.compose.base.ImageIcon
 import dev.lackluster.hyperx.compose.base.DrawableResIcon
+import dev.lackluster.hyperx.compose.base.ImageIcon
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.BasicComponentColors
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
@@ -32,9 +32,11 @@ fun SwitchPreference(
     switchColors: SwitchColors = SwitchDefaults.switchColors(),
     onCheckedChange: ((Boolean) -> Unit)? = null,
 ) {
-    var spValue by remember { mutableStateOf(
-        key?.let { SafeSP.getBoolean(it, defValue) } ?: defValue
-    ) }
+    var spValue by remember {
+        mutableStateOf(
+            key?.let { SafeSP.getBoolean(it, defValue) } ?: defValue
+        )
+    }
     val updatedOnCheckedChange by rememberUpdatedState(onCheckedChange)
 
     BasicComponent(
@@ -43,12 +45,12 @@ fun SwitchPreference(
         titleColor = titleColor,
         summary = summary,
         summaryColor = summaryColor,
-        leftAction = {
+        startAction = {
             icon?.let {
                 DrawableResIcon(it)
             }
         },
-        rightActions = {
+        endActions = {
             Switch(
                 checked = spValue,
                 onCheckedChange = { newValue ->
@@ -96,12 +98,12 @@ fun SwitchPreference(
         titleColor = titleColor,
         summary = summary,
         summaryColor = summaryColor,
-        leftAction = {
+        startAction = {
             icon?.let {
                 DrawableResIcon(it)
             }
         },
-        rightActions = {
+        endActions = {
             Switch(
                 checked = checked.value,
                 onCheckedChange = { newValue ->

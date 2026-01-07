@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,9 +36,8 @@ import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
 import top.yukonga.miuix.kmp.icon.MiuixIcons
-import top.yukonga.miuix.kmp.icon.icons.useful.Back
+import top.yukonga.miuix.kmp.icon.extended.Back
 import top.yukonga.miuix.kmp.theme.MiuixTheme
-import top.yukonga.miuix.kmp.utils.getWindowSize
 import top.yukonga.miuix.kmp.utils.overScrollVertical
 import top.yukonga.miuix.kmp.utils.scrollEndHaptic
 
@@ -61,7 +60,7 @@ fun BasePage(
         ) {
             Icon(
                 modifier = Modifier.size(26.dp),
-                imageVector = MiuixIcons.Useful.Back,
+                imageVector = MiuixIcons.Back,
                 contentDescription = "Back",
                 tint = MiuixTheme.colorScheme.onSurfaceSecondary
             )
@@ -71,7 +70,7 @@ fun BasePage(
     content: LazyListScope.() -> Unit
 ) {
     val scrollBehavior = MiuixScrollBehavior(rememberTopAppBarState())
-    val hazeTint = MiuixTheme.colorScheme.background.copy(
+    val hazeTint = MiuixTheme.colorScheme.surface.copy(
         if (scrollBehavior.state.collapsedFraction <= 0f) 1f
         else lerp(1f, 0.67f, (scrollBehavior.state.collapsedFraction))
     )
@@ -91,7 +90,7 @@ fun BasePage(
             TopAppBar(
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top)),
-                color = if (blurEnabled.value) Color.Transparent else MiuixTheme.colorScheme.background,
+                color = if (blurEnabled.value) Color.Transparent else MiuixTheme.colorScheme.surface,
                 title = title,
                 scrollBehavior = scrollBehavior,
                 navigationIcon = { navigationIcon.invoke(navigationIconPadding) },
@@ -104,7 +103,7 @@ fun BasePage(
         hazeStyle = HazeStyle(
             blurRadius = 25.dp,
             noiseFactor = 0f,
-            backgroundColor = MiuixTheme.colorScheme.background,
+            backgroundColor = MiuixTheme.colorScheme.surface,
             tint = HazeTint(hazeTint)
         ),
         adjustPadding = adjustPadding,
@@ -114,8 +113,8 @@ fun BasePage(
                 .overScrollVertical()
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .scrollEndHaptic()
-                .height(getWindowSize().height.dp)
-                .background(MiuixTheme.colorScheme.background),
+                .fillMaxHeight()
+                .background(MiuixTheme.colorScheme.surface),
             state = listState,
             contentPadding = paddingValues,
             content = content

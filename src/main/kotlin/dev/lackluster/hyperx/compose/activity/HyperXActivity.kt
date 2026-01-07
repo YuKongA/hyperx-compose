@@ -1,45 +1,33 @@
 package dev.lackluster.hyperx.compose.activity
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.res.Configuration
 import android.os.Bundle
-import androidx.annotation.Keep
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.Keep
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import top.yukonga.miuix.kmp.utils.getRoundedCorner
 
 @Keep
 abstract class HyperXActivity : ComponentActivity() {
     companion object {
-        private var cornerRadius: Int = 0
-        val screenCornerRadius: MutableIntState = mutableIntStateOf(cornerRadius)
+        private var cornerRadius = 0.dp
+        val screenCornerRadius: MutableState<Dp> = mutableStateOf(cornerRadius)
 
-        @SuppressLint("DiscouragedApi")
-        fun getCornerRadiusTop(context: Activity): Int {
-            val radius: Int
-            val resourceId = context.resources.getIdentifier("rounded_corner_radius_top", "dimen", "android")
-            radius = if (resourceId > 0) {
-                (context.resources.getDimension(resourceId) / context.resources.displayMetrics.density).toInt()
-            } else {
-                0
-            }
-            cornerRadius = radius
-            screenCornerRadius.intValue = cornerRadius
-            return radius
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        getCornerRadiusTop(this)
         window.isNavigationBarContrastEnforced = false
-//        context = this
         setContent {
+            cornerRadius = getRoundedCorner()
+            screenCornerRadius.value = cornerRadius
             AppContent()
         }
     }
@@ -47,9 +35,9 @@ abstract class HyperXActivity : ComponentActivity() {
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
         if (isInMultiWindowMode) {
-            screenCornerRadius.intValue = 0
+            screenCornerRadius.value = 0.dp
         } else {
-            screenCornerRadius.intValue = cornerRadius
+            screenCornerRadius.value = cornerRadius
         }
     }
 

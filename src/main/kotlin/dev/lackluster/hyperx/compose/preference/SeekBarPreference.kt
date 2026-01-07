@@ -20,15 +20,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.lackluster.hyperx.compose.R
 import dev.lackluster.hyperx.compose.activity.SafeSP
-import dev.lackluster.hyperx.compose.base.ImageIcon
 import dev.lackluster.hyperx.compose.base.DrawableResIcon
+import dev.lackluster.hyperx.compose.base.ImageIcon
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.BasicComponentColors
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
 import top.yukonga.miuix.kmp.basic.Slider
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
-import kotlin.text.toInt
 
 @Composable
 fun SeekBarPreference(
@@ -45,9 +44,11 @@ fun SeekBarPreference(
     valueColor: RightActionColor = RightActionDefaults.rightActionColors(),
     onValueChange: ((Int) -> Unit)? = null,
 ) {
-    var spValue by remember { mutableIntStateOf(
-        key?.let { SafeSP.getInt(it, defValue) } ?: defValue
-    ) }
+    var spValue by remember {
+        mutableIntStateOf(
+            key?.let { SafeSP.getInt(it, defValue) } ?: defValue
+        )
+    }
     val updatedOnValueChange by rememberUpdatedState(onValueChange)
     val dialogVisibility = remember { mutableStateOf(false) }
 
@@ -74,12 +75,12 @@ fun SeekBarPreference(
             insideMargin = PaddingValues(16.dp, 16.dp, 16.dp, 12.dp),
             title = title,
             titleColor = titleColor,
-            leftAction = {
+            startAction = {
                 icon?.let {
                     DrawableResIcon(it)
                 }
             },
-            rightActions = {
+            endActions = {
                 if (showValue) {
                     Text(
                         text = String.format(Locale.current.platformLocale, format, spValue),
@@ -132,9 +133,11 @@ fun SeekBarPreference(
     valueColor: RightActionColor = RightActionDefaults.rightActionColors(),
     onValueChange: ((Float) -> Unit)? = null,
 ) {
-    var spValue by remember { mutableFloatStateOf(
-        key?.let { SafeSP.getFloat(it, defValue) } ?: defValue
-    ) }
+    var spValue by remember {
+        mutableFloatStateOf(
+            key?.let { SafeSP.getFloat(it, defValue) } ?: defValue
+        )
+    }
     val updatedOnValueChange by rememberUpdatedState(onValueChange)
     val dialogVisibility = remember { mutableStateOf(false) }
 
@@ -161,12 +164,12 @@ fun SeekBarPreference(
             insideMargin = PaddingValues(16.dp, 16.dp, 16.dp, 12.dp),
             title = title,
             titleColor = titleColor,
-            leftAction = {
+            startAction = {
                 icon?.let {
                     DrawableResIcon(it)
                 }
             },
-            rightActions = {
+            endActions = {
                 if (showValue) {
                     Text(
                         text = String.format(Locale.current.platformLocale, format, spValue),
