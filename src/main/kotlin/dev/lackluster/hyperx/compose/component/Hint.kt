@@ -42,7 +42,6 @@ fun Hint(
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 6.dp)
                 .heightIn(min = 60.dp)
                 .padding(contentPadding)
                 .fillMaxWidth(),

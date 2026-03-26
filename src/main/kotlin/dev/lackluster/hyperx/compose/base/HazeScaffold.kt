@@ -137,10 +137,9 @@ fun HazeScaffold(
                         forceInvalidateOnPreDraw = false
                     }
                 } else {
-                    Modifier
+                    Modifier.background(fixedBackgroundColor)
                 }
                     .zIndex(1f)
-                    .background(fixedBackgroundColor)
                     .padding(top = contentPadding.calculateTopPadding())
                     .clickable(
                         indication = null,

@@ -29,6 +29,68 @@ fun DropDownPreference(
     title: String,
     summary: String? = null,
     entries: List<DropDownEntry>,
+    value: Int = 0,
+    mode: DropDownMode = DropDownMode.Popup,
+    showValue: Boolean = true,
+    enabled: Boolean = true,
+    titleColor: BasicComponentColors = BasicComponentDefaults.titleColor(),
+    summaryColor: BasicComponentColors = BasicComponentDefaults.summaryColor(),
+    onSelectedIndexChange: ((Int) -> Unit)? = null,
+) {
+    val updatedOnSelectedIndexChange by rememberUpdatedState(onSelectedIndexChange)
+
+    val wrappedEntries = entries.map { entry ->
+        SpinnerEntry(
+            icon = if (entry.hasIcon()) { imageModifier ->
+                entry.RenderIcon(imageModifier)
+            } else null,
+            title = entry.title,
+            summary = entry.summary,
+        )
+    }
+
+    val startAction: @Composable (() -> Unit)? = icon?.let { { DrawableResIcon(it) } }
+
+    when (mode) {
+        DropDownMode.Dialog -> {
+            SuperSpinner(
+                items = wrappedEntries,
+                selectedIndex = value,
+                title = title,
+                dialogButtonString = stringResource(R.string.button_cancel),
+                titleColor = titleColor,
+                summary = summary,
+                summaryColor = summaryColor,
+                startAction = startAction,
+                enabled = enabled,
+                showValue = showValue,
+                onSelectedIndexChange = updatedOnSelectedIndexChange,
+            )
+        }
+
+        else -> {
+            SuperSpinner(
+                items = wrappedEntries,
+                selectedIndex = value,
+                title = title,
+                titleColor = titleColor,
+                summary = summary,
+                summaryColor = summaryColor,
+                startAction = startAction,
+                enabled = enabled,
+                showValue = showValue,
+                onSelectedIndexChange = updatedOnSelectedIndexChange,
+            )
+        }
+    }
+}
+
+@Composable
+fun DropDownPreference(
+    icon: ImageIcon? = null,
+    title: String,
+    summary: String? = null,
+    entries: List<DropDownEntry>,
     key: String? = null,
     defValue: Int = 0,
     mode: DropDownMode = DropDownMode.Popup,

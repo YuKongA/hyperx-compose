@@ -1,5 +1,7 @@
 package dev.lackluster.hyperx.compose.base
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -47,11 +49,17 @@ fun TabRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         tabs.forEachIndexed { index, tabText ->
+            val isSelected = selectedTabIndex == index
+            val bgColor = colors.backgroundColor(isSelected)
+            val borderColor = colors.borderColor(isSelected)
+            val actualBorder =
+                if (bgColor == borderColor) null else BorderStroke(1.5.dp, borderColor)
             Surface(
                 shape = shape,
                 onClick = { currentOnTabSelected?.invoke(index) },
                 enabled = currentOnTabSelected != null,
-                color = colors.backgroundColor(selectedTabIndex == index),
+                color = bgColor,
+                border = actualBorder,
                 modifier = Modifier
                     .weight(1.0f)
                     .semantics { role = Role.Tab }
@@ -93,13 +101,17 @@ object TabRowDefaults {
      */
     @Composable
     fun tabRowColors(
-        backgroundColor: Color = MiuixTheme.colorScheme.surface,
-        contentColor: Color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
-        selectedBackgroundColor: Color = MiuixTheme.colorScheme.surface,
-        selectedContentColor: Color = MiuixTheme.colorScheme.onSurface
+        borderColor: Color = MiuixTheme.colorScheme.surfaceContainer,
+        backgroundColor: Color = if (isSystemInDarkTheme()) MiuixTheme.colorScheme.surface else MiuixTheme.colorScheme.surfaceContainer,
+        contentColor: Color = MiuixTheme.colorScheme.onSurfaceContainer.copy(alpha = 0.6f),
+        selectedBorderColor: Color = MiuixTheme.colorScheme.surfaceContainerHigh,
+        selectedBackgroundColor: Color = MiuixTheme.colorScheme.surfaceContainerHigh,
+        selectedContentColor: Color = MiuixTheme.colorScheme.onSurfaceContainer
     ): TabRowColors = TabRowColors(
+        borderColor = borderColor,
         backgroundColor = backgroundColor,
         contentColor = contentColor,
+        selectedBorderColor = selectedBorderColor,
         selectedBackgroundColor = selectedBackgroundColor,
         selectedContentColor = selectedContentColor
     )
@@ -108,11 +120,17 @@ object TabRowDefaults {
 
 @Immutable
 class TabRowColors(
+    private val borderColor: Color,
     private val backgroundColor: Color,
     private val contentColor: Color,
+    private val selectedBorderColor: Color,
     private val selectedBackgroundColor: Color,
     private val selectedContentColor: Color
 ) {
+    @Stable
+    internal fun borderColor(selected: Boolean): Color =
+        if (selected) selectedBorderColor else borderColor
+
     @Stable
     internal fun backgroundColor(selected: Boolean): Color =
         if (selected) selectedBackgroundColor else backgroundColor

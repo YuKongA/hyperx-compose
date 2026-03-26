@@ -18,6 +18,62 @@ import top.yukonga.miuix.kmp.extra.SuperDialog
 
 @Composable
 fun AlertDialog(
+    visible: Boolean = true,
+    title: String?,
+    message: String? = null,
+    cancelable: Boolean = true,
+    mode: AlertDialogMode = AlertDialogMode.Positive,
+    negativeText: String = stringResource(R.string.button_cancel),
+    positiveText: String = stringResource(R.string.button_ok),
+    onDismissRequest: (() -> Unit)? = null,
+    onNegativeButton: (() -> Unit)? = null,
+    onPositiveButton: (() -> Unit)? = null,
+) {
+    val hapticFeedback = LocalHapticFeedback.current
+    SuperDialog(
+        show = visible,
+        title = title,
+        summary = message,
+        onDismissRequest = {
+            if (cancelable) {
+                onDismissRequest?.invoke()
+            }
+        },
+        content = {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                if (mode != AlertDialogMode.Positive) {
+                    TextButton(
+                        modifier = Modifier.weight(1f),
+                        text = negativeText,
+                        onClick = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                            onNegativeButton?.invoke() ?: onDismissRequest?.invoke()
+                        }
+                    )
+                }
+                if (mode == AlertDialogMode.NegativeAndPositive) {
+                    Spacer(Modifier.width(20.dp))
+                }
+                if (mode != AlertDialogMode.Negative) {
+                    TextButton(
+                        modifier = Modifier.weight(1f),
+                        text = positiveText,
+                        colors = ButtonDefaults.textButtonColorsPrimary(),
+                        onClick = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                            onPositiveButton?.invoke() ?: onDismissRequest?.invoke()
+                        }
+                    )
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun AlertDialog(
     visibility: MutableState<Boolean>,
     title: String?,
     message: String? = null,

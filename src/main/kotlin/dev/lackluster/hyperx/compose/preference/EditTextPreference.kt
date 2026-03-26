@@ -45,6 +45,82 @@ fun EditTextPreference(
     icon: ImageIcon? = null,
     title: String,
     summary: String? = null,
+    value: Any = "",
+    defValue: Any = "",
+    dataType: EditTextDataType,
+    dialogMessage: String? = null,
+    dialogPlaceholder: String? = null,
+    isValueValid: ((value: Any) -> Boolean)? = null,
+    valuePosition: ValuePosition = ValuePosition.VALUE_VIEW,
+    enabled: Boolean = true,
+    titleColor: BasicComponentColors = BasicComponentDefaults.titleColor(),
+    summaryColor: BasicComponentColors = BasicComponentDefaults.summaryColor(),
+    onValueChange: ((String, Any) -> Unit)? = null,
+) {
+    val updatedOnValueChange by rememberUpdatedState(onValueChange)
+    val dialogVisibility = remember { mutableStateOf(false) }
+    val dialogHoldDown = remember { mutableStateOf(false) }
+
+    val doOnInputConfirm: (String) -> Unit = { newString: String ->
+        val newValue = when (dataType) {
+            EditTextDataType.BOOLEAN -> newString.toBooleanStrictOrNull()
+            EditTextDataType.INT -> newString.toIntOrNull()
+            EditTextDataType.FLOAT -> newString.toFloatOrNull()
+            EditTextDataType.LONG -> newString.toLongOrNull()
+            EditTextDataType.STRING -> newString
+        }
+        if (newValue != null && isValueValid?.invoke(newValue) != false && value != newValue) {
+            updatedOnValueChange?.let { it(newString, newValue) }
+        }
+    }
+
+    SuperArrow(
+        title = title,
+        titleColor = titleColor,
+        summary = value.toString().takeIf { valuePosition == ValuePosition.SUMMARY_VIEW && it.isNotBlank() } ?: summary,
+        summaryColor = summaryColor,
+        startAction = icon?.let { { DrawableResIcon(it) } },
+        endActions = {
+            if (valuePosition == ValuePosition.VALUE_VIEW) {
+                Text(
+                    modifier = Modifier.widthIn(max = 130.dp),
+                    text = value.toString(),
+                    fontSize = MiuixTheme.textStyles.body2.fontSize,
+                    color = MiuixTheme.colorScheme.onSurfaceVariantActions,
+                    textAlign = TextAlign.End,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2
+                )
+            }
+        },
+        onClick = {
+            if (enabled) {
+                dialogVisibility.value = true
+                dialogHoldDown.value = true
+            }
+        },
+        holdDownState = dialogHoldDown.value,
+        enabled = enabled,
+    )
+
+    EditTextDialog(
+        visibility = dialogVisibility,
+        holdDownState = dialogHoldDown,
+        title = title,
+        message = dialogMessage,
+        placeholder = dialogPlaceholder ?: defValue.toString(),
+        value = value.toString(),
+        onInputConfirm = { newString ->
+            doOnInputConfirm(newString)
+        }
+    )
+}
+
+@Composable
+fun EditTextPreference(
+    icon: ImageIcon? = null,
+    title: String,
+    summary: String? = null,
     key: String? = null,
     defValue: Any = "",
     dataType: EditTextDataType,
@@ -175,6 +251,9 @@ fun EditTextDialog(
                     .padding(bottom = 12.dp)
                     .focusRequester(focusRequester),
                 value = textState.value,
+                textStyle = MiuixTheme.textStyles.main.copy(
+                    color = MiuixTheme.colorScheme.onPrimaryContainer
+                ),
                 singleLine = true,
                 label = placeholder ?: "",
                 useLabelAsPlaceholder = true,
@@ -209,7 +288,8 @@ fun EditTextDialog(
                     }
                 )
             }
-        })
+        }
+    )
 }
 
 enum class EditTextDataType {

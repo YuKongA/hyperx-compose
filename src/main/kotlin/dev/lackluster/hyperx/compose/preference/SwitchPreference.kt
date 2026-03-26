@@ -1,6 +1,5 @@
 package dev.lackluster.hyperx.compose.preference
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -8,13 +7,39 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.dp
 import dev.lackluster.hyperx.compose.activity.SafeSP
 import dev.lackluster.hyperx.compose.base.DrawableResIcon
 import dev.lackluster.hyperx.compose.base.ImageIcon
 import top.yukonga.miuix.kmp.basic.BasicComponentColors
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
 import top.yukonga.miuix.kmp.extra.SuperSwitch
+
+@Composable
+fun SwitchPreference(
+    icon: ImageIcon? = null,
+    title: String,
+    summary: String? = null,
+    value: Boolean = false,
+    enabled: Boolean = true,
+    titleColor: BasicComponentColors = BasicComponentDefaults.titleColor(),
+    summaryColor: BasicComponentColors = BasicComponentDefaults.summaryColor(),
+    onCheckedChange: ((Boolean) -> Unit)? = null,
+) {
+    val updatedOnCheckedChange by rememberUpdatedState(onCheckedChange)
+
+    SuperSwitch(
+        checked = value,
+        onCheckedChange = { newValue ->
+            updatedOnCheckedChange?.invoke(newValue)
+        },
+        title = title,
+        titleColor = titleColor,
+        summary = summary,
+        summaryColor = summaryColor,
+        startAction = icon?.let { { DrawableResIcon(it) } },
+        enabled = enabled,
+    )
+}
 
 @Composable
 fun SwitchPreference(

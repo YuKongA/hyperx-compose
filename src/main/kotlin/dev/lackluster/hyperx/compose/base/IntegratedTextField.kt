@@ -52,7 +52,8 @@ fun IntegratedTextField(
         enabled = enabled,
         singleLine = true,
         textStyle = MiuixTheme.textStyles.main.copy(
-            textAlign = TextAlign.End
+            textAlign = TextAlign.End,
+            color = MiuixTheme.colorScheme.onPrimaryContainer
         ),
         cursorBrush = SolidColor(MiuixTheme.colorScheme.primary),
         interactionSource = interaction,
