@@ -1,8 +1,10 @@
 package dev.lackluster.hyperx.compose.activity
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 object SafeSP {
+    @Volatile
     var mSP: SharedPreferences? = null
 
     fun setSP(sharedPreferences: SharedPreferences?) {
@@ -14,19 +16,14 @@ object SafeSP {
     }
 
     fun containsKey(key: String, defValue: Boolean = false): Boolean {
-        return if (mSP == null) {
-            defValue
-        } else {
-            mSP!!.all.containsKey(key)
-        }
+        return mSP?.all?.containsKey(key) ?: defValue
     }
 
     fun putAny(key: String, any: Any) {
-        if (mSP == null) return
-        mSP!!.edit().apply {
+        mSP?.edit()?.apply {
             when (any) {
                 is Boolean -> putBoolean(key, any)
-                is String ->  putString(key, any)
+                is String -> putString(key, any)
                 is Int -> putInt(key, any)
                 is Float -> putFloat(key, any)
                 is Long -> putLong(key, any)
@@ -36,66 +33,33 @@ object SafeSP {
     }
 
     fun putStringSet(key: String, set: Set<String>) {
-        if (mSP == null) return
-        mSP!!.edit().apply {
+        mSP?.edit {
             putStringSet(key, set)
-            apply()
         }
     }
 
-    fun getBoolean(key: String): Boolean {
-        return getBoolean(key, false)
+    fun getBoolean(key: String, defValue: Boolean = false): Boolean {
+        return mSP?.getBoolean(key, defValue) ?: defValue
     }
 
-    fun getBoolean(key: String, defValue: Boolean): Boolean {
-        return if (mSP == null) {
-            defValue
-        } else {
-            mSP!!.getBoolean(key, defValue)
-        }
+    fun getInt(key: String, defValue: Int = 0): Int {
+        return mSP?.getInt(key, defValue) ?: defValue
     }
 
-    fun getInt(key: String): Int {
-        return getInt(key, 0)
+    fun getFloat(key: String, defValue: Float = 0.0f): Float {
+        return mSP?.getFloat(key, defValue) ?: defValue
     }
 
-    fun getInt(key: String, defValue: Int): Int {
-        return if (mSP == null) {
-            defValue
-        } else {
-            mSP!!.getInt(key, defValue)
-        }
+    fun getLong(key: String, defValue: Long = 0L): Long {
+        return mSP?.getLong(key, defValue) ?: defValue
     }
 
-    fun getFloat(key: String, defValue: Float): Float {
-        return if (mSP == null) {
-            defValue
-        } else {
-            mSP!!.getFloat(key, defValue)
-        }
-    }
-
-    fun getLong(key: String, defValue: Long): Long {
-        return if (mSP == null) {
-            defValue
-        } else {
-            mSP!!.getLong(key, defValue)
-        }
-    }
-
-    fun getString(key: String, defValue: String): String {
-        return if (mSP == null) {
-            defValue
-        } else {
-            mSP!!.getString(key, defValue) ?: defValue
-        }
+    fun getString(key: String, defValue: String = ""): String {
+        return mSP?.getString(key, defValue) ?: defValue
     }
 
     fun getStringSet(key: String, defValue: MutableSet<String>): MutableSet<String> {
-        return if (mSP == null) {
-            defValue
-        } else {
-            mSP!!.getStringSet(key, defValue) ?: defValue
-        }
+        val originalSet = mSP?.getStringSet(key, defValue) ?: defValue
+        return HashSet(originalSet)
     }
 }

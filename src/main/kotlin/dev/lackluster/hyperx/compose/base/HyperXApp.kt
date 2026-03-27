@@ -1,6 +1,12 @@
 package dev.lackluster.hyperx.compose.base
 
 import android.content.res.Configuration
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -166,7 +172,43 @@ fun SplitLayout(
             backStack = backStack,
             modifier = Modifier.weight(rightWeight),
             onBack = { navigator.pop() },
-            transitionEffects = NavDisplayTransitionEffects.Default,
+            transitionSpec = {
+                ContentTransform(
+                    slideInHorizontally(
+                        initialOffsetX = { it },
+                        animationSpec = tween(durationMillis = 300, easing = FastOutLinearInEasing),
+                    ),
+                    slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = tween(durationMillis = 300, easing = FastOutLinearInEasing),
+                    ),
+                )
+            },
+            popTransitionSpec = {
+                ContentTransform(
+                    slideInHorizontally(
+                        initialOffsetX = { it },
+                        animationSpec = tween(durationMillis = 300, easing = FastOutLinearInEasing),
+                    ),
+                    slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = tween(durationMillis = 300, easing = FastOutLinearInEasing),
+                    ),
+                )
+            },
+            predictivePopTransitionSpec = {
+                ContentTransform(
+                    slideInHorizontally(
+                        initialOffsetX = { it },
+                        animationSpec = tween(durationMillis = 550, easing = LinearEasing),
+                    ),
+                    slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = tween(durationMillis = 550, easing = LinearEasing),
+                    ),
+                )
+            },
+            transitionEffects = NavDisplayTransitionEffects.None,
             entryProvider = { key ->
                 when (key) {
                     is HyperXRoute.Empty -> NavEntry(key) {
@@ -193,11 +235,6 @@ fun DefaultEmptyPage(
     ) {
         DrawableResIcon(imageIcon)
     }
-}
-
-object HyperXAppDefaults {
-    const val PAGE_MAIN = "MainPage"
-    const val PAGE_EMPTY = "EmptyPage"
 }
 
 enum class AppRootLayout {
