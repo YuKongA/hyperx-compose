@@ -53,7 +53,6 @@ fun IntegratedTextField(
         singleLine = true,
         textStyle = MiuixTheme.textStyles.main.copy(
             textAlign = TextAlign.End,
-            color = MiuixTheme.colorScheme.onPrimaryContainer
         ),
         cursorBrush = SolidColor(MiuixTheme.colorScheme.primary),
         interactionSource = interaction,

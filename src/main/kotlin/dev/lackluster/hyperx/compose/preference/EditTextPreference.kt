@@ -251,9 +251,6 @@ fun EditTextDialog(
                     .padding(bottom = 12.dp)
                     .focusRequester(focusRequester),
                 value = textState.value,
-                textStyle = MiuixTheme.textStyles.main.copy(
-                    color = MiuixTheme.colorScheme.onPrimaryContainer
-                ),
                 singleLine = true,
                 label = placeholder ?: "",
                 useLabelAsPlaceholder = true,
