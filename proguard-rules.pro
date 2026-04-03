@@ -20,5 +20,5 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class dev.lackluster.hyperx.compose.activity.HyperXActivity
--keep class dev.lackluster.hyperx.compose.activity.SafeSP
+-keep class dev.lackluster.hyperx.core.HyperXActivity
+-keep class dev.lackluster.hyperx.core.SafeSP
