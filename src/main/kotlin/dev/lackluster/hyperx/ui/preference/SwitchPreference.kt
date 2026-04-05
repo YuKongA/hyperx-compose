@@ -7,7 +7,7 @@ import dev.lackluster.hyperx.ui.preference.core.PreferenceKey
 import dev.lackluster.hyperx.ui.preference.core.rememberPreferenceState
 import top.yukonga.miuix.kmp.basic.BasicComponentColors
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
-import top.yukonga.miuix.kmp.extra.SuperSwitch
+import top.yukonga.miuix.kmp.preference.SwitchPreference
 
 @Composable
 fun SwitchPreference(
@@ -20,7 +20,7 @@ fun SwitchPreference(
     titleColor: BasicComponentColors = BasicComponentDefaults.titleColor(),
     summaryColor: BasicComponentColors = BasicComponentDefaults.summaryColor(),
 ) {
-    SuperSwitch(
+    SwitchPreference(
         title = title,
         titleColor = titleColor,
         summary = summary,

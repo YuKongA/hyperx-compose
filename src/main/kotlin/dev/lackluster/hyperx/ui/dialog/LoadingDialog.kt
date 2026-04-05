@@ -14,8 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.extra.DialogDefaults
-import top.yukonga.miuix.kmp.extra.SuperDialog
+import top.yukonga.miuix.kmp.layout.DialogDefaults
+import top.yukonga.miuix.kmp.overlay.OverlayDialog
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 @Composable
@@ -26,7 +26,7 @@ fun LoadingDialog(
     cancelable: Boolean = false,
     onDismissRequest: () -> Unit = {}
 ) {
-    SuperDialog(
+    OverlayDialog(
         show = visible,
         onDismissRequest = {
             if (cancelable) onDismissRequest()

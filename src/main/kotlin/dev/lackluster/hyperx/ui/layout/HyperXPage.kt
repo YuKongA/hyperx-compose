@@ -2,27 +2,18 @@ package dev.lackluster.hyperx.ui.layout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.add
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
@@ -47,11 +38,10 @@ fun HyperXPage(
     modifier: Modifier = Modifier,
     contentModifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
-    navigationIcon: @Composable (padding: PaddingValues) -> Unit = { padding ->
+    navigationIcon: @Composable () -> Unit = {
         val navigator = LocalNavigator.current
         IconButton(
             modifier = Modifier
-                .padding(padding)
                 .padding(start = 21.dp)
                 .size(40.dp),
             onClick = { navigator.pop() }
@@ -64,72 +54,62 @@ fun HyperXPage(
             )
         }
     },
-    actions: @Composable RowScope.(padding: PaddingValues) -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
     fixedHeader: (@Composable () -> Unit)? = null,
     content: LazyListScope.() -> Unit
 ) {
     val uiConfig = LocalHyperXLayoutConfig.current
-    val pageMode = LocalPageMode.current
-    val layoutPadding = LocalLayoutPadding.current // 注意我们在 Locals 里把 adjustPadding 改名了
+    val layoutPadding = LocalLayoutPadding.current
 
     val scrollBehavior = MiuixScrollBehavior(rememberTopAppBarState())
 
-    val isScrolled by remember {
-        derivedStateOf {
-            listState.canScrollBackward
-        }
-    }
-
     val layoutDirection = LocalLayoutDirection.current
-    val systemBarInsets = WindowInsets.systemBars.add(WindowInsets.displayCutout).only(WindowInsetsSides.Horizontal).asPaddingValues()
 
-    val navigationIconPadding = PaddingValues.Absolute(
-        left = if (pageMode != PageLayoutMode.SPLIT_SECONDARY) systemBarInsets.calculateLeftPadding(layoutDirection) else 0.dp
-    )
-    val actionsPadding = PaddingValues.Absolute(
-        right = if (pageMode != PageLayoutMode.SPLIT_PRIMARY) systemBarInsets.calculateRightPadding(layoutDirection) else 0.dp
-    )
 
-    val topBarColor = if (uiConfig.isBlurEnabled && isScrolled) {
+    val containerColor = MiuixTheme.colorScheme.surface
+    val topBarColor = if (uiConfig.isBlurEnabled) {
         Color.Transparent
     } else {
-        MiuixTheme.colorScheme.surface
+        containerColor
     }
 
-    val blurTintAlpha = if (MiuixTheme.colorScheme.surface.luminance() >= 0.5f) {
+    val blurTintAlpha = if (containerColor.luminance() >= 0.5f) {
         uiConfig.lightBlurAlpha
     } else {
         uiConfig.darkBlurAlpha
     }
 
-    HazeScaffold(
+    HyperXScaffold(
         modifier = modifier.fillMaxSize(),
         topBar = { contentPadding ->
             TopAppBar(
                 color = topBarColor,
                 title = title,
                 scrollBehavior = scrollBehavior,
-                navigationIcon = { navigationIcon(navigationIconPadding) },
-                actions = { actions(this, actionsPadding) },
+                navigationIcon = { navigationIcon() },
+                actions = { actions(this) },
                 defaultWindowInsetsPadding = false,
-                horizontalPadding = 28.dp + contentPadding.calculateLeftPadding(layoutDirection)
+                titlePadding = 28.dp + contentPadding.calculateStartPadding(layoutDirection),
+                navigationIconPadding = contentPadding.calculateStartPadding(layoutDirection),
+                actionIconPadding = contentPadding.calculateEndPadding(layoutDirection),
+                bottomContent = {
+                    fixedHeader?.let {
+                        Box(
+                            modifier = Modifier
+                                .background(topBarColor)
+                                .padding(contentPadding)
+                        ) {
+                            it()
+                        }
+                    }
+                }
             )
         },
         blurTopBar = uiConfig.isBlurEnabled,
-        isTopBarScrolled = isScrolled,
+        topBarBlurFractionProvider = { scrollBehavior.state.overlappedFraction },
+        containerColor = containerColor,
         blurTintAlpha = blurTintAlpha,
         layoutPadding = layoutPadding,
-        fixedHeader = { contentPadding ->
-            fixedHeader?.let {
-                Box(
-                    modifier = Modifier
-                        .background(topBarColor)
-                        .padding(contentPadding)
-                ) {
-                    it()
-                }
-            }
-        }
     ) { paddingValues ->
         LazyColumn(
             modifier = contentModifier

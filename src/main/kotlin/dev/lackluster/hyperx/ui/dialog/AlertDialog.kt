@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import dev.lackluster.hyperx.R
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.TextButton
-import top.yukonga.miuix.kmp.extra.SuperDialog
+import top.yukonga.miuix.kmp.overlay.OverlayDialog
 
 @Composable
 fun AlertDialog(
@@ -30,7 +30,7 @@ fun AlertDialog(
 ) {
     val hapticFeedback = LocalHapticFeedback.current
 
-    SuperDialog(
+    OverlayDialog(
         show = visible,
         title = title,
         summary = message,

@@ -18,8 +18,8 @@ import dev.lackluster.hyperx.ui.icons.ImmersionClose
 import dev.lackluster.hyperx.ui.icons.ImmersionConfirm
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
-import top.yukonga.miuix.kmp.extra.SuperBottomSheet
 import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
 import top.yukonga.miuix.kmp.theme.LocalDismissState
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -35,7 +35,7 @@ fun HyperXSheet(
 ) {
     val insetsPadding = WindowInsets.systemBars.only(WindowInsetsSides.Bottom).asPaddingValues()
 
-    SuperBottomSheet(
+    OverlayBottomSheet(
         show = show,
         title = title,
         allowDismiss = allowDismiss,

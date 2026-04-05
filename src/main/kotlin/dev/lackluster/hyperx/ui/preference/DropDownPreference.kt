@@ -19,7 +19,7 @@ import dev.lackluster.hyperx.ui.preference.core.rememberPreferenceState
 import top.yukonga.miuix.kmp.basic.BasicComponentColors
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
 import top.yukonga.miuix.kmp.basic.SpinnerEntry
-import top.yukonga.miuix.kmp.extra.SuperSpinner
+import top.yukonga.miuix.kmp.preference.OverlaySpinnerPreference
 
 enum class DropDownMode {
     Popup,
@@ -80,7 +80,7 @@ fun <T> DropDownPreference(
 
     when (mode) {
         DropDownMode.Dialog -> {
-            SuperSpinner(
+            OverlaySpinnerPreference(
                 items = wrappedEntries,
                 selectedIndex = selectedIndex,
                 title = title,
@@ -95,7 +95,7 @@ fun <T> DropDownPreference(
             )
         }
         else -> {
-            SuperSpinner(
+            OverlaySpinnerPreference(
                 items = wrappedEntries,
                 selectedIndex = selectedIndex,
                 title = title,

@@ -46,10 +46,9 @@ fun FullScreenDialog(
         modifier = modifier,
         contentModifier = contentModifier,
         listState = listState,
-        navigationIcon = { padding ->
+        navigationIcon = {
             IconButton(
                 modifier = Modifier
-                    .padding(padding)
                     .padding(start = 21.dp)
                     .size(40.dp),
                 onClick = {
@@ -68,10 +67,9 @@ fun FullScreenDialog(
                 )
             }
         },
-        actions = { padding ->
+        actions = {
             IconButton(
                 modifier = Modifier
-                    .padding(padding)
                     .padding(end = 21.dp)
                     .size(40.dp),
                 onClick = {

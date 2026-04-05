@@ -18,14 +18,14 @@ kotlin {
 
 android {
     namespace = "dev.lackluster.hyperx"
-    compileSdk = 36
+    compileSdk = 37
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
     defaultConfig {
-        minSdk = 31
+        minSdk = 33
         consumerProguardFiles("consumer-rules.pro")
     }
     buildFeatures {
@@ -43,12 +43,13 @@ android {
 }
 
 dependencies {
-    api("top.yukonga.miuix.kmp:miuix:0.8.8")
-    api("top.yukonga.miuix.kmp:miuix-icons:0.8.8")
-    api("dev.chrisbanes.haze:haze:1.7.2")
+    api("top.yukonga.miuix.kmp:miuix-ui:0.9.0")
+    api("top.yukonga.miuix.kmp:miuix-preference:0.9.0")
+    api("top.yukonga.miuix.kmp:miuix-icons:0.9.0")
+    api("top.yukonga.miuix.kmp:miuix-blur:0.9.0")
     api("androidx.compose.foundation:foundation:1.10.6")
     api("androidx.activity:activity-compose:1.13.0")
-    api("top.yukonga.miuix.kmp:miuix-navigation3-ui:0.8.8")
+    api("top.yukonga.miuix.kmp:miuix-navigation3-ui:0.9.0")
     api("androidx.navigation3:navigation3-runtime:1.1.0-rc01")
     api("org.jetbrains.androidx.navigationevent:navigationevent-compose:1.0.1")
     api("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")

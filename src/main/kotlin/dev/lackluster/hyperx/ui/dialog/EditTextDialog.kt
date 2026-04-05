@@ -29,7 +29,7 @@ import kotlinx.coroutines.delay
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextField
-import top.yukonga.miuix.kmp.extra.SuperDialog
+import top.yukonga.miuix.kmp.overlay.OverlayDialog
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 @Composable
@@ -56,7 +56,7 @@ fun EditTextDialog(
     val focusRequester = remember { FocusRequester() }
     val hapticFeedback = LocalHapticFeedback.current
 
-    SuperDialog(
+    OverlayDialog(
         show = visible,
         title = title,
         summary = message,
