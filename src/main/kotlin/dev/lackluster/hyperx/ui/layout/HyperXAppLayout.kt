@@ -1,15 +1,9 @@
 package dev.lackluster.hyperx.ui.layout
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -20,6 +14,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -46,11 +41,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
-import androidx.navigation3.ui.NavDisplayTransitionEffects
 import dev.lackluster.hyperx.R
 import dev.lackluster.hyperx.navigation.HyperXRoute
 import dev.lackluster.hyperx.navigation.LocalNavigator
 import dev.lackluster.hyperx.navigation.Navigator
+import dev.lackluster.hyperx.ui.animation.HyperXNavTransitions
 import dev.lackluster.hyperx.ui.component.AdaptiveIcon
 import dev.lackluster.hyperx.ui.component.IconSize
 import dev.lackluster.hyperx.ui.component.ImageIcon
@@ -67,12 +62,12 @@ fun HyperXAppLayout(
     primaryContent: @Composable () -> Unit
 ) {
     HyperXTheme {
-        val configuration = LocalConfiguration.current
-        val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         val density = LocalDensity.current
         val containerSize = LocalWindowInfo.current.containerSize
         val windowWidth = with(density) { containerSize.width.toDp() }
         val windowHeight = with(density) { containerSize.height.toDp() }
+
+        val isLandscape = windowWidth > windowHeight
         val largeScreen = windowHeight >= 480.dp && windowWidth >= 840.dp
 
         val backStack = rememberSaveable(
@@ -144,10 +139,10 @@ private fun UnifiedNormalLayout(
     val layoutDirection = LocalLayoutDirection.current
     val systemBarInsets = WindowInsets.systemBars.add(WindowInsets.displayCutout).only(WindowInsetsSides.Horizontal).asPaddingValues()
 
-    val contentPadding = PaddingValues.Absolute(
-        left = systemBarInsets.calculateLeftPadding(layoutDirection) + extraPadding.calculateLeftPadding(layoutDirection),
+    val contentPadding = PaddingValues(
+        start = systemBarInsets.calculateStartPadding(layoutDirection) + extraPadding.calculateStartPadding(layoutDirection),
         top = extraPadding.calculateTopPadding(),
-        right = systemBarInsets.calculateRightPadding(layoutDirection) + extraPadding.calculateRightPadding(layoutDirection),
+        end = systemBarInsets.calculateEndPadding(layoutDirection) + extraPadding.calculateEndPadding(layoutDirection),
         bottom = extraPadding.calculateBottomPadding()
     )
 
@@ -159,7 +154,10 @@ private fun UnifiedNormalLayout(
         NavDisplay(
             backStack = backStack,
             onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-            transitionEffects = NavDisplayTransitionEffects.Default,
+            transitionSpec = HyperXNavTransitions.normalTransitionSpec(layoutDirection),
+            popTransitionSpec = HyperXNavTransitions.normalPopTransitionSpec(layoutDirection),
+            predictivePopTransitionSpec = HyperXNavTransitions.normalPredictivePopTransitionSpec(layoutDirection),
+            transitionEffects = HyperXNavTransitions.NormalTransitionEffects,
             entryProvider = { key ->
                 when (key) {
                     // 全屏下，遇到 Main 路由直接渲染主页
@@ -182,17 +180,17 @@ private fun UnifiedSplitLayout(
     val layoutDirection = LocalLayoutDirection.current
     val systemBarInsets = WindowInsets.systemBars.add(WindowInsets.displayCutout).only(WindowInsetsSides.Horizontal).asPaddingValues()
 
-    val leftPadding = PaddingValues.Absolute(
-        left = systemBarInsets.calculateLeftPadding(layoutDirection) + 12.dp,
+    val primaryPadding = PaddingValues(
+        start = systemBarInsets.calculateStartPadding(layoutDirection) + 12.dp,
         top = systemBarInsets.calculateTopPadding(),
-        right = 12.dp,
+        end = 12.dp,
         bottom = systemBarInsets.calculateBottomPadding()
     )
 
-    val rightPadding = PaddingValues.Absolute(
-        left = 12.dp,
+    val secondaryPadding = PaddingValues(
+        start = 12.dp,
         top = systemBarInsets.calculateTopPadding(),
-        right = systemBarInsets.calculateRightPadding(layoutDirection) + 12.dp,
+        end = systemBarInsets.calculateEndPadding(layoutDirection) + 12.dp,
         bottom = systemBarInsets.calculateBottomPadding()
     )
 
@@ -204,7 +202,7 @@ private fun UnifiedSplitLayout(
         Box(modifier = Modifier.weight(1f)) {
             CompositionLocalProvider(
                 LocalPageMode provides PageLayoutMode.SPLIT_PRIMARY,
-                LocalLayoutPadding provides leftPadding
+                LocalLayoutPadding provides primaryPadding
             ) {
                 primaryContent()
             }
@@ -215,49 +213,16 @@ private fun UnifiedSplitLayout(
         // 右半边区域：根据路由栈渲染详情页
         CompositionLocalProvider(
             LocalPageMode provides PageLayoutMode.SPLIT_SECONDARY,
-            LocalLayoutPadding provides rightPadding
+            LocalLayoutPadding provides secondaryPadding
         ) {
             NavDisplay(
                 backStack = backStack,
                 modifier = Modifier.weight(rightWeight),
                 onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                transitionSpec = {
-                    ContentTransform(
-                        slideInHorizontally(
-                            initialOffsetX = { it },
-                            animationSpec = tween(durationMillis = 300, easing = FastOutLinearInEasing),
-                        ),
-                        slideOutHorizontally(
-                            targetOffsetX = { it },
-                            animationSpec = tween(durationMillis = 300, easing = FastOutLinearInEasing),
-                        ),
-                    )
-                },
-                popTransitionSpec = {
-                    ContentTransform(
-                        slideInHorizontally(
-                            initialOffsetX = { it },
-                            animationSpec = tween(durationMillis = 300, easing = FastOutLinearInEasing),
-                        ),
-                        slideOutHorizontally(
-                            targetOffsetX = { it },
-                            animationSpec = tween(durationMillis = 300, easing = FastOutLinearInEasing),
-                        ),
-                    )
-                },
-                predictivePopTransitionSpec = {
-                    ContentTransform(
-                        slideInHorizontally(
-                            initialOffsetX = { it },
-                            animationSpec = tween(durationMillis = 550, easing = LinearEasing),
-                        ),
-                        slideOutHorizontally(
-                            targetOffsetX = { it },
-                            animationSpec = tween(durationMillis = 550, easing = LinearEasing),
-                        ),
-                    )
-                },
-                transitionEffects = NavDisplayTransitionEffects.None,
+                transitionSpec = HyperXNavTransitions.splitTransitionSpec(layoutDirection),
+                popTransitionSpec = HyperXNavTransitions.splitTransitionSpec(layoutDirection),
+                predictivePopTransitionSpec = HyperXNavTransitions.splitPredictivePopTransitionSpec(layoutDirection),
+                transitionEffects = HyperXNavTransitions.SplitTransitionEffects,
                 entryProvider = { key ->
                     when (key) {
                         is HyperXRoute.Main -> NavEntry(key) { emptyContent() }
