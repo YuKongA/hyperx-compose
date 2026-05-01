@@ -24,11 +24,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -40,6 +36,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import dev.lackluster.hyperx.R
 import dev.lackluster.hyperx.navigation.HyperXRoute
@@ -70,14 +67,7 @@ fun HyperXAppLayout(
         val isLandscape = windowWidth > windowHeight
         val largeScreen = windowHeight >= 480.dp && windowWidth >= 840.dp
 
-        val backStack = rememberSaveable(
-            saver = listSaver(
-                save = { it.toList() },
-                restore = { it.toMutableStateList() }
-            )
-        ) {
-            mutableStateListOf<NavKey>(HyperXRoute.Main)
-        }
+        val backStack = rememberNavBackStack(HyperXRoute.Main)
         val navigator = remember(backStack) { Navigator(backStack) }
 
         val appRootLayout = when {
