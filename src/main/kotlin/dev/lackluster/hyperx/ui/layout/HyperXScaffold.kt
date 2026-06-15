@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
@@ -38,9 +37,7 @@ fun HyperXScaffold(
     containerColor: Color = MiuixTheme.colorScheme.surface,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Vertical),
     blurTopBar: Boolean = false,
-    topBarBlurFractionProvider: () -> Float = { 1f },
     blurBottomBar: Boolean = false,
-    bottomBarBlurFractionProvider: () -> Float = { 1f },
     blurTintAlpha: Float = 0.8f,
     layoutPadding: PaddingValues = PaddingValues(0.dp),
     content: @Composable (PaddingValues) -> Unit
@@ -63,7 +60,6 @@ fun HyperXScaffold(
                         containerColor = containerColor,
                         blurRadius = maxTopBlurRadius,
                         blurTintAlpha = blurTintAlpha,
-                        fractionProvider = topBarBlurFractionProvider
                     ) {
                         it(layoutPadding)
                     }
@@ -80,7 +76,6 @@ fun HyperXScaffold(
                         containerColor = containerColor,
                         blurRadius = maxBottomBlurRadius,
                         blurTintAlpha = blurTintAlpha,
-                        fractionProvider = bottomBarBlurFractionProvider
                     ) {
                         it(layoutPadding)
                     }
@@ -124,7 +119,6 @@ private fun DynamicBlurBox(
     containerColor: Color,
     blurRadius: Float,
     blurTintAlpha: Float,
-    fractionProvider: () -> Float,
     content: @Composable () -> Unit
 ) {
     if (backdrop == null) {
@@ -144,13 +138,7 @@ private fun DynamicBlurBox(
             shape = RectangleShape,
             blurRadius = blurRadius,
             colors = blurColors,
-        ).drawBehind {
-            val fraction = fractionProvider()
-            val overlayAlpha = (1f - fraction).coerceIn(0f, 1f)
-            if (overlayAlpha > 0f) {
-                drawRect(color = containerColor.copy(alpha = overlayAlpha))
-            }
-        }
+        )
     ) {
         content()
     }

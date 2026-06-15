@@ -106,7 +106,6 @@ fun HyperXPage(
             )
         },
         blurTopBar = uiConfig.isBlurEnabled,
-        topBarBlurFractionProvider = { scrollBehavior.state.overlappedFraction },
         containerColor = containerColor,
         blurTintAlpha = blurTintAlpha,
         layoutPadding = layoutPadding,
